@@ -1,8 +1,38 @@
 const OTP = require("./model");
 const generateOTP = require("./../../utils/generateOTP");
 const sendEmail = require("./../../utils/sendEmail");
-const { hashData } = require("./../../utils/hashData");
+const { hashData, verifyHashedData } = require("./../../utils/hashData");
 const { AUTH_EMAIL } = process.env;
+
+const verifyOTP = async ({ email, otp }) => {
+    try {
+        if (!(email && otp)) {
+            throw Error("Provide values for email, otp");
+        }
+
+        // ensure otp record exits
+        const matchedOTPRecord = await OTP.findOne({ email });
+
+        if (!matchedOTPRecord) {
+            throw Error("No otp records found.");
+        }
+
+        const { expiresAt } = matchedOTPRecord;
+
+        // checking for expired code
+        if (expiresAt < Date.now()) {
+            await OTP.deleteOne({ email });
+            throw Error("Code has expired. Request for a new one.");
+        }
+
+        // not expired yet, verify value
+        const hashedOTP = matchedOTPRecord.otp;
+        const validOTP = await verifyHashedData(otp, hashedOTP);
+        return validOTP;
+    } catch (error) {
+        throw error;
+    }
+};
 
 const sendOTP = async ({ email, subject, message, duration = 1 }) => {
     try {
@@ -123,4 +153,12 @@ const sendOTP = async ({ email, subject, message, duration = 1 }) => {
     }
 };
 
-module.exports = { sendOTP };
+const deleteOTP = async (email) => {
+    try {
+        await OTP.deleteOne({ email });
+    } catch (error) {
+        throw error;
+    }
+};
+
+module.exports = { sendOTP, verifyOTP, deleteOTP };
