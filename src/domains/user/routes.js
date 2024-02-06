@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { createNewUser, authenticateUser } = require("./controller");
 const auth = require("./../../middleware/auth");
+const { sendVerificationOTPEmail } = require("./../email_verification/controller");
 
 // protected route
 router.get("/private_data", auth, (req, res) => {
@@ -39,27 +40,22 @@ router.post("/signup", async (req, res)  => {
 
         if (!(name && email && password)) {
             throw new Error("Empty input fields!");
-        }
-
-        if (!/^[a-zA-Z ]*$/.test(name)) {
+        } else if (!/^[a-zA-Z ]*$/.test(name)) {
             throw new Error("Invalid name entered");
-        }
-
-        if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+        } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
             throw new Error("Invalid email entered");
-        }
-
-        if (password.length < 8 || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password)) {
+        } else if (password.length < 8 || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password)) {
             throw new Error("Password is too short or lacks complexity!");
+        } else {
+            // good credentials, create new user
+            const newUser = await createNewUser({
+                name,
+                email,
+                password,
+            });
+            await sendVerificationOTPEmail(email);
+            res.status(200).json(newUser);
         }
-
-        const newUser = await createNewUser({
-            name,
-            email,
-            password,
-        });
-
-        res.status(200).json(newUser);
     } catch (error) {
         res.status(400).send(error.message);
     }
