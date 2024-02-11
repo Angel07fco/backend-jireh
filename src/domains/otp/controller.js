@@ -7,14 +7,14 @@ const { AUTH_EMAIL } = process.env;
 const verifyOTP = async ({ email, otp }) => {
     try {
         if (!(email && otp)) {
-            throw Error("Provide values for email, otp");
+            throw Error("Proporcione valores para email, otp");
         }
 
         // ensure otp record exits
         const matchedOTPRecord = await OTP.findOne({ email });
 
         if (!matchedOTPRecord) {
-            throw Error("No otp records found.");
+            throw Error("No se han encontrado registros de otp.");
         }
 
         const { expiresAt } = matchedOTPRecord;
@@ -22,7 +22,7 @@ const verifyOTP = async ({ email, otp }) => {
         // checking for expired code
         if (expiresAt < Date.now()) {
             await OTP.deleteOne({ email });
-            throw Error("Code has expired. Request for a new one.");
+            throw Error("El código ha caducado. Solicite uno nuevo.");
         }
 
         // not expired yet, verify value
@@ -37,7 +37,7 @@ const verifyOTP = async ({ email, otp }) => {
 const sendOTP = async ({ email, subject, message, duration = 1 }) => {
     try {
         if (!(email && subject && message)) {
-            throw Error("Provide values for email, subject, message");
+            throw Error("Proporcionar valores para email, asunto, mensaje");
         }
 
         // clear any old record
@@ -53,86 +53,30 @@ const sendOTP = async ({ email, subject, message, duration = 1 }) => {
             subject,
             html: `
             <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8" />
-                    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                    <title>Envio de correo Electronico con NodeJS</title>
-                    <link rel="preconnect" href="https://fonts.googleapis.com" />
-                    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-                    <link
-                    href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@600&display=swap"
-                    rel="stylesheet" />
-                    <style>
-                    html {
-                        height: 100%;
-                    }
-                    body {
-                        position: absolute;
-                        bottom: 0;
-                        right: 0;
-                        font-family: "Instrument Sans", sans-serif;
-                    }
-                    .content {
-                        top: 0;
-                        margin: 0 auto;
-                        width: 90%;
-                        height: 100vh;
-                        background-color: #f2f4f8;
-                    }
-                    .logo {
-                        position: absolute;
-                        bottom: 0;
-                        right: 0;
-                        margin: 10px;
-                        width: 150px;
-                        margin-right: 50px;
-                    }
-                    h1 {
-                        color: #22b5a0;
-                        padding: 30px 5px;
-                    }
-                    h3 {
-                        text-align: center;
-                    }
-                    section {
-                        padding: 5px 50px;
-                    }
-                    p {
-                        text-align: justify;
-                        color: #666 !important;
-                    }
-                    hr {
-                        border: 1px solid #eee;
-                    }
-                    </style>
-                </head>
-                <body>
-                    <div class="content">
-                    <h1 style="text-align: center">
-                        ¡Hola JIREH Community!
-                        <hr />
-                        <p>${message}</p>
-                    </h1>
-                    <section>
-                        <h3>
-                        Este correo electrónico es una prueba enviada utilizando Node.js.
-                        </h3>
-                        <p>
-                        ${generatedOTP}
-                        </p>
-                        <br />
-                        <h3>¡This code expires in ${duration}!</h3>
-                    </section>
-                    <a href="https://urianviera.com/">
-                        <img
-                        class="logo"
-                        src="https://urianviera.com/assets/imgs/logo.png"
-                        alt="Urian-Viera Logo" />
-                    </a>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Send code email</title>
+                <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
+            </head>
+            <body style="font-family: 'Roboto', sans-serif; background-color: #f6f6f6; max-width: 50%; margin: 0 auto;">
+                <nav style="background-color: #00263e; padding: 1rem;">
+                    <h1 style="color: #b9d5de; font-weight: bold; font-size: 1.5rem; text-align: center;">¡Hola JIREH Community!</h1>
+                </nav>
+                <header style="background-color: #fff; padding: 1.25rem;">
+                    <p style="margin-bottom: 1rem;">Está recibiendo este correo electrónico porque se ha solicitado un código de un solo uso que puede utilizarse para la autenticación.</p>
+                    <p style="font-weight: bold; margin-top: 1rem;">${message}</p>
+                    <div style="text-align: center; margin-top: 1.25rem;">
+                        <p style="font-weight: bold; color: #00263e; font-size: 2rem;">${generatedOTP}</p>
+                        <p style="font-weight: bold; color: #00263e; margin-top: 1.25rem;">¡Este código expira en ${duration} hora!</p>
                     </div>
-                </body>
+                    <p style="margin-top: 1.25rem;">Si no ha solicitado este correo electrónico utilice el chat de la interfaz de usuario o acceda a la sección de Contacto del <a href="https://veterinaria-jireh.vercel.app/" style="color: #00263e; font-weight: bold; text-decoration: underline;">sitio oficial de Jireh</a> para ponerse en contacto con nosotros.</p>
+                </header>
+                <footer style="background-color: #00263e; text-align: center; padding: 0.75rem;">
+                    <em style="color: #b9d5de;">Este mensaje ha sido enviado desde JIreh</em>
+                </footer>
+            </body>
             </html>`
         };
         await sendEmail(mailOptions);

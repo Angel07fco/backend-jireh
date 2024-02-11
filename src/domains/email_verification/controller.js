@@ -5,11 +5,11 @@ const verifyUserEmail = async ({ email, otp }) => {
     try {
         const validOTP = await verifyOTP({ email, otp });
         if (!validOTP) {
-            throw Error("Invalid code passed. Check your inbox.");
+            throw Error("Se ha introducido un código no válido. Compruebe su bandeja de entrada.");
         }
         // now update user record to show verified.
         await User.updateOne({ email }, { verified: true });
-        
+
         await deleteOTP(email);
         return;
     } catch (error) {
@@ -22,13 +22,13 @@ const sendVerificationOTPEmail = async (email) => {
         // check if an account exits
         const existingUser = await User.findOne({ email });
         if (!existingUser) {
-            throw Error("Theres no account for the provided email.");
+            throw Error("No hay cuenta para el correo electrónico proporcionado.");
         }
 
         const otpDetails = {
             email,
-            subject: "Email Verification",
-            message: "Verify your email with the code below",
+            subject: "Verificación del correo electrónico",
+            message: "Por favor, introduzca el siguiente código para validar su correo electrónico:",
             duration: 1
         };
         const createdOTP = await sendOTP(otpDetails);

@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
         password = password.trim();
 
         if (!(email && password)) {
-            throw Error("Empty credentials supplied!");
+            throw Error("Credenciales ingresadas vacias!");
         }
 
         const authenticatedUser = await authenticateUser({ email, password });
@@ -32,33 +32,37 @@ router.post("/", async (req, res) => {
 
 // Signup
 router.post("/signup", async (req, res)  => {
-    try {
-        let { name, email, password } = req.body;
-        name = name.trim();
-        email = email.trim();
-        password = password.trim();  // Corregir aquí
+    let { user, email, phone, password } = req.body;
 
-        if (!(name && email && password)) {
-            throw new Error("Empty input fields!");
-        } else if (!/^[a-zA-Z ]*$/.test(name)) {
-            throw new Error("Invalid name entered");
-        } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-            throw new Error("Invalid email entered");
-        } else if (password.length < 8 || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password)) {
-            throw new Error("Password is too short or lacks complexity!");
+    try {
+        user = user.trim();
+        email = email.trim();
+        phone = phone.trim();
+        password = password.trim();
+
+        if (!(user && email && phone && password)) {
+            throw new Error("Campos de entrada vacíos!");
         } else {
             // good credentials, create new user
             const newUser = await createNewUser({
-                name,
+                user,
                 email,
+                phone,
                 password,
             });
             await sendVerificationOTPEmail(email);
-            res.status(200).json(newUser);
+            res.status(200).json({
+                id: newUser._id,
+                email: newUser.email,
+                msj: "Se ha creado su cuenta correctamente",
+                createdAt: newUser.createdAt,
+                updatedAt: newUser.updatedAt
+            });
         }
     } catch (error) {
         res.status(400).send(error.message);
     }
 });
+
 
 module.exports = router;

@@ -7,7 +7,7 @@ const resetUserPassword = async ({ email, otp, newPassword }) => {
         const validOTP = await verifyOTP({ email, otp });
 
         if (!validOTP) {
-            throw Error("Invalid code passed. Check your inbox.");
+            throw Error("Tu código de acceso no coincide con nuestros registros. Inténtelo de nuevo.");
         }
 
         //  now update user record with new password.
@@ -29,17 +29,17 @@ const sendPasswordResetOTPEmail = async (email) => {
         // check if an account exists
         const existingUser = await User.findOne({ email });
         if (!existingUser) {
-            throw Error("There´s no account for the provided email.")
+            throw Error("No hay ninguna cuenta para el correo electrónico proporcionado.")
         }
 
         if (!existingUser.verified) {
-            throw Error("Email hasn´t been verified yet. Check your inbox.");
+            throw Error("El correo electrónico aún no se ha verificado. Comprueba tu bandeja de entrada.");
         }
 
         const optDetails = {
             email,
-            subject: "Password Reset",
-            message: "Enter the code below to reset your password.",
+            subject: "Restablecer contraseña",
+            message: "Por favor, introduzca el siguiente código para restablecer su contraseña.",
             duration: 1,
         };
         const createdOTP = await sendOTP(optDetails);

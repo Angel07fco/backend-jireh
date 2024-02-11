@@ -6,7 +6,7 @@ router.post("/verify", async (req, res) => {
     try {
         const { email, otp } = req.body;
 
-        if (!(email && otp)) throw Error("Empty otp details are not allowed");
+        if (!(email && otp)) throw Error("No se permiten detalles otp vacíos.");
 
         await verifyUserEmail({ email, otp });
         res.status(200).json({ email, verified: true});
@@ -19,7 +19,7 @@ router.post("/verify", async (req, res) => {
 router.post("/", async (req, res) => {
     try {
         const { email } = req.body;
-        if (!email) throw Error("An email is required!");
+        if (!email) throw Error("Se requiere un correo electrónico!");
 
         const createdEmailVerificationOTP = await sendVerificationOTPEmail(email);
         res.status(200).json(createdEmailVerificationOTP);

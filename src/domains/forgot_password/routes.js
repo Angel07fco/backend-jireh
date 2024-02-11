@@ -5,7 +5,7 @@ const { sendPasswordResetOTPEmail, resetUserPassword } = require("./controller")
 router.post("/reset", async (req, res) => {
     try {
         let { email, otp, newPassword} = req.body;
-        if (!(email && otp && newPassword)) throw Error("Empty credentials are not allowed.");
+        if (!(email && otp && newPassword)) throw Error("Credenciales no validas.");
 
         await resetUserPassword({ email, otp, newPassword });
         res.status(200).json({ email, passwordreset: true });
@@ -18,7 +18,7 @@ router.post("/reset", async (req, res) => {
 router.post("/", async (req, res) => {
     try {
         const { email } = req.body;
-        if (!email) throw Error("An email ir required.");
+        if (!email) throw Error("Email es requerido.");
 
         const createdPasswordResetOTP = await sendPasswordResetOTPEmail(email);
         res.status(200).json(createdPasswordResetOTP);
