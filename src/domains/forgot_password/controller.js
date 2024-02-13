@@ -4,10 +4,17 @@ const { hashData } = require("./../../utils/hashData");
 
 const resetUserPassword = async ({ email, otp, newPassword }) => {
     try {
+
+        const existingUser = await User.findOne({ email });
+
+        if (!existingUser.verified) {
+            throw Error("El correo electrónico aún no se ha verificado. Comprueba tu bandeja de entrada.");
+        }
+
         const validOTP = await verifyOTP({ email, otp });
 
         if (!validOTP) {
-            throw Error("Tu código de acceso no coincide con nuestros registros. Inténtelo de nuevo.");
+            throw Error("El código no coincide con nuestros registros. Verifique su bandeja de entrada.");
         }
 
         //  now update user record with new password.
