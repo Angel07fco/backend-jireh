@@ -1,3 +1,4 @@
+const moment = require("moment");
 const User = require("./model");
 const { hashData, verifyHashedData } = require("./../../utils/hashData");
 const createToken = require("./../../utils/createToken");
@@ -34,6 +35,7 @@ const authenticateUser = async (data) => {
 
 const createNewUser = async (data) => {
     try {
+        //const fecha = moment().add(30, 'days').endOf('day').toDate();
         const { user, email, phone, password } = data;
 
         const existingUser = await User.findOne({ email });
@@ -52,11 +54,12 @@ const createNewUser = async (data) => {
             email,
             phone,
             password: hashedPassword,
+            accountCreated: moment().format('DD MM YYYY, hh:mm:ss a')
         });
         const createdUser = await newUser.save();
         return createdUser;
     } catch (error) {
-        throw new Error(error.message); // Reenvía el error para manejarlo en la función signup
+        throw new Error(error.message);
     }
 };
 
