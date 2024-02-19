@@ -5,6 +5,7 @@ const createToken = require("./../../utils/createToken");
 
 const authenticateUser = async (data) => {
     try {
+        const fecha = moment().add(30, 'days').endOf('day').toDate();
         const { email, password } = data;
 
         const fetchedUser = await User.findOne({ email });
@@ -16,15 +17,33 @@ const authenticateUser = async (data) => {
             throw Error("El correo electrónico aún no se ha verificado. Comprueba tu bandeja de entrada.")
         }
 
+        if (fetchedUser.accountStatus === "bloqueda") {
+            throw Error(`Para ${email} la cuenta ha sido bloqueada temporalmente. Comprueba tu bandeja de entrada.`);
+        }
+
+        if (fetchedUser.isLogginIntented >= 2) {
+            await User.updateOne({ email }, { accountStatus: "bloqueda" } );
+            throw Error(`Para ${email} la cuenta ha sido bloqueada temporalmente. Comprueba tu bandeja de entrada.`);
+        }
+
         const hashedPassword = fetchedUser.password;
         const passwordMatch = await verifyHashedData(password, hashedPassword);
 
         if (!passwordMatch) {
+            await User.updateOne({ email }, { $inc: { isLogginIntented: 1 } });
             throw Error(`Para ${email} la contraseña no es valida!`);
         }
 
         const tokenData = { userId: fetchedUser._id, email };
         const token = await createToken(tokenData);
+
+        await User.updateOne({ email }, {
+            userStatus: "activo",
+            accountStatus: "activo",
+            isLogginDate: moment().format('DD MM YYYY, hh:mm:ss a'),
+            token: token,
+            expiratedTokenDate: moment(fecha).format('DD MM YYYY, hh:mm:ss a')
+        });
 
         fetchedUser.token = token;
         return fetchedUser;
@@ -35,7 +54,6 @@ const authenticateUser = async (data) => {
 
 const createNewUser = async (data) => {
     try {
-        //const fecha = moment().add(30, 'days').endOf('day').toDate();
         const { user, email, phone, password } = data;
 
         const existingUser = await User.findOne({ email });

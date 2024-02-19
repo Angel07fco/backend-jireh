@@ -71,7 +71,7 @@ const sendOTP = async ({ email, subject, message, duration = 1 }) => {
                         <p style="font-weight: bold; color: #00263e; font-size: 2rem;">${generatedOTP}</p>
                         <p style="font-weight: bold; color: #00263e; margin-top: 1.25rem;">¡Este código expira en ${duration} hora!</p>
                     </div>
-                    <p style="margin-top: 1.25rem;">Si no ha solicitado este correo electrónico utilice el chat de la interfaz de usuario o acceda a la sección de Contacto del <a href="https://veterinaria-jireh.vercel.app/" style="color: #00263e; font-weight: bold; text-decoration: underline;">sitio oficial de Jireh</a> para ponerse en contacto con nosotros.</p>
+                    <p style="margin-top: 1.25rem;">Si no ha solicitado este correo electrónico haga caso omiso o de lo contrario utilice el chat de la interfaz de usuario o acceda a la sección de Contacto del <a href="https://veterinaria-jireh.vercel.app/" style="color: #00263e; font-weight: bold; text-decoration: underline;">sitio oficial de Jireh</a> para ponerse en contacto con nosotros.</p>
                 </header>
                 <footer style="background-color: #00263e; text-align: center; padding: 0.75rem;">
                     <em style="color: #b9d5de;">Este mensaje ha sido enviado desde JIreh</em>

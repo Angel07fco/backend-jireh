@@ -10,10 +10,11 @@ const UserSchema = new Schema({
     accountStatus: { type: String, trim: true, default: null },
     rol: { type: String, default: "usuario" },
     accountCreated : { type: String },
-    isLogginDate: { type: Date, default: null },
+    isLogginDate: { type: String, default: null },
     token: { type: String, default: null },
-    expiratedTokenDate : { type: Date, default: null },
-    verified: { type: Boolean, default: false }
+    expiratedTokenDate : { type: String, default: null },
+    verified: { type: Boolean, default: false },
+    isLogginIntented: { type: Number, default: 0 }
 });
 
 const User = mongoose.model("User", UserSchema);

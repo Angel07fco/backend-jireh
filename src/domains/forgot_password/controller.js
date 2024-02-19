@@ -1,10 +1,10 @@
+const moment = require("moment");
 const User = require("./../user/model");
 const { sendOTP, verifyOTP, deleteOTP } = require("./../otp/controller");
 const { hashData } = require("./../../utils/hashData");
 
 const resetUserPassword = async ({ email, otp, newPassword }) => {
     try {
-
         const existingUser = await User.findOne({ email });
 
         if (!existingUser.verified) {
@@ -23,7 +23,7 @@ const resetUserPassword = async ({ email, otp, newPassword }) => {
         }
 
         const hashedNewPassword = await hashData(newPassword);
-        await User.updateOne({ email }, { password:  hashedNewPassword });
+        await User.updateOne({ email }, {password:  hashedNewPassword});
         await deleteOTP(email);
         return;
     } catch (error) {
