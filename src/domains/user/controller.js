@@ -2,6 +2,7 @@ const moment = require("moment");
 const User = require("./model");
 const { hashData, verifyHashedData } = require("./../../utils/hashData");
 const createToken = require("./../../utils/createToken");
+const { sendEmailAccountblocked, sendEmailStatusUserAdmin } = require("./../email_verification/controller");
 
 const authenticateUser = async (data) => {
     try {
@@ -13,17 +14,15 @@ const authenticateUser = async (data) => {
         if (!fetchedUser) {
             throw Error("No encontramos una cuenta vinculada con ese correo electrónico. ¿Estás registrado?");
         }
+
         if (!fetchedUser.verified) {
             throw Error("El correo electrónico aún no se ha verificado. Comprueba tu bandeja de entrada.")
         }
 
         if (fetchedUser.accountStatus === "bloqueda") {
-            throw Error(`Para ${email} la cuenta ha sido bloqueada temporalmente. Comprueba tu bandeja de entrada.`);
-        }
-
-        if (fetchedUser.isLogginIntented >= 2) {
-            await User.updateOne({ email }, { accountStatus: "bloqueda" } );
-            throw Error(`Para ${email} la cuenta ha sido bloqueada temporalmente. Comprueba tu bandeja de entrada.`);
+            await sendEmailAccountblocked(email);
+            await sendEmailStatusUserAdmin(email);
+            throw Error(`La cuenta ha sido bloqueada temporalmente. Comprueba tu bandeja de entrada.`);
         }
 
         const hashedPassword = fetchedUser.password;
@@ -31,7 +30,13 @@ const authenticateUser = async (data) => {
 
         if (!passwordMatch) {
             await User.updateOne({ email }, { $inc: { isLogginIntented: 1 } });
-            throw Error(`Para ${email} la contraseña no es valida!`);
+            if (fetchedUser.isLogginIntented >= 4) {
+                await User.updateOne({ email }, { accountStatus: "bloqueda" } );
+                await sendEmailAccountblocked(email);
+                await sendEmailStatusUserAdmin(email);
+                throw Error(`La cuenta ha sido bloqueada temporalmente. Comprueba tu bandeja de entrada.`);
+            }
+            throw Error(`La contraseña no es valida!`);
         }
 
         const tokenData = { userId: fetchedUser._id, email };
@@ -40,6 +45,7 @@ const authenticateUser = async (data) => {
         await User.updateOne({ email }, {
             userStatus: "activo",
             accountStatus: "activo",
+            isLogginIntented: 0,
             isLogginDate: moment().format('DD MM YYYY, hh:mm:ss a'),
             token: token,
             expiratedTokenDate: moment(fecha).format('DD MM YYYY, hh:mm:ss a')

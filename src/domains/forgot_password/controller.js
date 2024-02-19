@@ -23,7 +23,7 @@ const resetUserPassword = async ({ email, otp, newPassword }) => {
         }
 
         const hashedNewPassword = await hashData(newPassword);
-        await User.updateOne({ email }, {password:  hashedNewPassword});
+        await User.updateOne({ email }, {password:  hashedNewPassword, accountStatus: "activo", isLogginIntented: 0 });
         await deleteOTP(email);
         return;
     } catch (error) {
