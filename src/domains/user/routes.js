@@ -23,8 +23,7 @@ router.post("/", async (req, res) => {
         }
 
         const authenticatedUser = await authenticateUser({ email, password });
-
-        res.status(200).json(authenticatedUser);
+        
         res.status(200).json({
             id: authenticatedUser._id,
             email: authenticatedUser.email,
