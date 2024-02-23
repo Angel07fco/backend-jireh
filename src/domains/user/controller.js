@@ -20,14 +20,14 @@ const authenticateUser = async (data) => {
             throw Error("El correo electrónico aún no se ha verificado. Se ha enviado un código  a tu correo, por favor comprueba tu bandeja de entrada.")
         }
 
-        if (fetchedUser.isLogginIntented > 2) {
-            throw Error(`Has intentado hacer 3 o mas intentos, tu cuenta se bloqueara temporalmente a los 5 intentos..`);
-        }
-
         if (fetchedUser.accountStatus === "bloqueda") {
             await sendEmailAccountblocked(email);
             await sendEmailStatusUserAdmin(email);
             throw Error(`La cuenta ha sido bloqueada temporalmente. Comprueba tu bandeja de entrada.`);
+        }
+
+        if (fetchedUser.isLogginIntented > 2) {
+            throw Error(`Has intentado hacer 3 o mas intentos, tu cuenta se bloqueara temporalmente a los 5 intentos..`);
         }
 
         const hashedPassword = fetchedUser.password;
