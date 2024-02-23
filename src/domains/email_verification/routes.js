@@ -10,6 +10,11 @@ router.post("/verify", async (req, res) => {
 
         await verifyUserEmail({ email, otp });
         res.status(200).json({ email, verified: true});
+        res.status(200).json({
+            email,
+            verified: true,
+            msj: "Tu cuenta ha sido activada correctamente, ahora puedes iniciar sesión."
+        });
     } catch (error) {
         res.status(400).send(error.message);
     }
