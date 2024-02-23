@@ -9,7 +9,6 @@ router.post("/verify", async (req, res) => {
         if (!(email && otp)) throw Error("No se permiten detalles otp vacíos.");
 
         await verifyUserEmail({ email, otp });
-        res.status(200).json({ email, verified: true});
         res.status(200).json({
             email,
             verified: true,
