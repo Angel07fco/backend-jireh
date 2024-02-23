@@ -2,7 +2,7 @@ const moment = require("moment");
 const User = require("./model");
 const { hashData, verifyHashedData } = require("./../../utils/hashData");
 const createToken = require("./../../utils/createToken");
-const { sendEmailAccountblocked, sendEmailStatusUserAdmin } = require("./../email_verification/controller");
+const { sendEmailAccountblocked, sendEmailStatusUserAdmin, sendVerificationOTPEmail } = require("./../email_verification/controller");
 
 const authenticateUser = async (data) => {
     try {
@@ -16,7 +16,8 @@ const authenticateUser = async (data) => {
         }
 
         if (!fetchedUser.verified) {
-            throw Error("El correo electrónico aún no se ha verificado. Comprueba tu bandeja de entrada.")
+            await sendVerificationOTPEmail(email);
+            throw Error("El correo electrónico aún no se ha verificado. Se ha enviado un código  a tu correo, por favor comprueba tu bandeja de entrada.")
         }
 
         if (fetchedUser.accountStatus === "bloqueda") {
