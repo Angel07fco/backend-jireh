@@ -26,10 +26,6 @@ const authenticateUser = async (data) => {
             throw Error(`La cuenta ha sido bloqueada temporalmente. Comprueba tu bandeja de entrada.`);
         }
 
-        if (fetchedUser.isLogginIntented > 2) {
-            throw Error(`Has intentado hacer 3 o mas intentos, tu cuenta se bloqueara temporalmente a los 5 intentos..`);
-        }
-
         const hashedPassword = fetchedUser.password;
         const passwordMatch = await verifyHashedData(password, hashedPassword);
 
