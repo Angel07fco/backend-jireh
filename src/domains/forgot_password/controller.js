@@ -7,6 +7,10 @@ const resetUserPassword = async ({ email, otp, newPassword }) => {
     try {
         const existingUser = await User.findOne({ email });
 
+        if (!existingUser) {
+            throw Error("El usuario no existe.");
+        }
+
         if (!existingUser.verified) {
             throw Error("El correo electrónico aún no se ha verificado. Comprueba tu bandeja de entrada.");
         }
@@ -17,14 +21,26 @@ const resetUserPassword = async ({ email, otp, newPassword }) => {
             throw Error("El código no coincide con nuestros registros. Verifique su bandeja de entrada.");
         }
 
-        //  now update user record with new password.
-        if (newPassword.length < 8) {
-            throw Error("Password is too short!");
+        // Verificar si la contraseña ya ha sido utilizada anteriormente
+        if (existingUser.previousPasswords.includes(newPassword)) {
+            throw Error("Esa contraseña ha sido utilizada anteriormente.");
         }
 
+        // Ahora actualizamos el registro del usuario con la nueva contraseña
         const hashedNewPassword = await hashData(newPassword);
-        await User.updateOne({ email }, {password:  hashedNewPassword, accountStatus: "activo", isLogginIntented: 0 });
+        // Actualizamos la contraseña y agregamos la nueva contraseña al array de contraseñas previas
+        await User.updateOne(
+            { email },
+            {
+                password: hashedNewPassword,
+                accountStatus: "activo",
+                isLogginIntented: 0,
+                $push: { previousPasswords: newPassword }
+            }
+        );
+
         await deleteOTP(email);
+
         return;
     } catch (error) {
         throw error;

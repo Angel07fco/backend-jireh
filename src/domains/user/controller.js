@@ -79,6 +79,7 @@ const createNewUser = async (data) => {
             email,
             phone,
             password: hashedPassword,
+            previousPasswords: [hashedPassword],
             accountCreated: moment().format('DD MM YYYY, hh:mm:ss a')
         });
         const createdUser = await newUser.save();

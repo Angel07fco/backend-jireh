@@ -8,11 +8,14 @@ router.post("/reset", async (req, res) => {
         if (!(email && otp && newPassword)) throw Error("Credenciales no validas.");
 
         await resetUserPassword({ email, otp, newPassword });
-        res.status(200).json({ email, passwordreset: true });
+        res.status(200).json({
+            email: email,
+            msj: "Se ha restablecido la contraseña correctamente."
+        });
     } catch (error) {
         res.status(400).send(error.message);
     }
-})
+});
 
 // Password reset request
 router.post("/", async (req, res) => {
@@ -21,7 +24,10 @@ router.post("/", async (req, res) => {
         if (!email) throw Error("Email es requerido.");
 
         const createdPasswordResetOTP = await sendPasswordResetOTPEmail(email);
-        res.status(200).json(createdPasswordResetOTP);
+        res.status(200).json({
+            createdPasswordResetOTP,
+            msj: "Código enviado exitosamente, Comprueba tu bandeja de entrada."
+        });
     } catch (error) {
         res.status(400).send(error.message);
     }

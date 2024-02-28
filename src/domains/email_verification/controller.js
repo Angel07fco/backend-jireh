@@ -49,7 +49,7 @@ const sendEmailAccountblocked = async (email) => {
         const otpDetails = {
             email,
             subject: "Cuenta bloqueada temporalmente",
-            message: "Su cuenta ha sido bloqueada temporalmente debido a varios intentos fallido al iniciar sesión, por favor ingrese el siguiente código para poder restablecer su contraseña.",
+            message: "Su cuenta ha sido bloqueada temporalmente debido a varios intentos fallidos al iniciar sesión, por favor ingrese el siguiente código para poder restablecer su contraseña.",
             duration: 1
         };
         const createdOTP = await sendOTP(otpDetails);
