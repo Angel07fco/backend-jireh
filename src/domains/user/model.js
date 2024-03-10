@@ -6,6 +6,8 @@ const UserSchema = new Schema({
     email: { type: String, require: true, trim: true, unique: true },
     phone: { type: String, require: true, trim: true },
     password: { type: String, require: true },
+    question_secret: { type: String, require: true },
+    reply_secret: { type: String, require: true },
     previousPasswords: { type: [String], default: [] },
     userStatus: { type: String, trim: true, default: null },
     accountStatus: { type: String, trim: true, default: null },

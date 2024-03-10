@@ -27,6 +27,7 @@ router.post("/", async (req, res) => {
         res.status(200).json({
             id: authenticatedUser._id,
             email: authenticatedUser.email,
+            token: authenticatedUser.token,
             msj: "Has iniciado sesión correctamente."
         });
     } catch (error) {
@@ -36,15 +37,17 @@ router.post("/", async (req, res) => {
 
 // Signup
 router.post("/signup", async (req, res)  => {
-    let { user, email, phone, password } = req.body;
+    let { user, email, phone, password, question_secret, reply_secret } = req.body;
 
     try {
         user = user.trim();
         email = email.trim();
         phone = phone.trim();
         password = password.trim();
+        question_secret = question_secret.trim();
+        reply_secret = reply_secret.trim();
 
-        if (!(user && email && phone && password)) {
+        if (!(user && email && phone && password && question_secret && reply_secret)) {
             throw new Error("Campos de entrada vacíos!");
         } else {
             // good credentials, create new user
@@ -52,7 +55,9 @@ router.post("/signup", async (req, res)  => {
                 user,
                 email,
                 phone,
-                password
+                password,
+                question_secret,
+                reply_secret
             });
             await sendVerificationOTPEmail(email);
             res.status(200).json({
