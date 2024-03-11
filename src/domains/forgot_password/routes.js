@@ -42,11 +42,11 @@ router.post("/", async (req, res) => {
         let createdPasswordReset = "";
         let msj = "";
 
-        if (indicator === 1) {
+        if (indicator === "1") {
             createdPasswordReset = await sendPasswordResetOTPEmail(email);
             msj = "Código enviado exitosamente, Comprueba tu bandeja de entrada.";
         }
-        if (indicator === 2) {
+        if (indicator === "2") {
             createdPasswordReset = await sendPasswordResetUser(email);
             msj = "Ahora puede escribir su respuesta";
         }
