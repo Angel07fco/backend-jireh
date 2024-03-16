@@ -23,10 +23,11 @@ const getServiceById = async (serviceId) => {
 
 const createNewService = async (data) => {
     try {
-        const { name, description, price } = data;
+        const { name, img, description, price } = data;
 
         const newService = new Service({
             name,
+            img,
             description,
             price
         });

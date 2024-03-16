@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const ServiceSchema = new Schema({
     name: { type: String, required: true },
+    img: { type: String },
     rating: { type: Number, default: 0, min: 0, max: 5 },
     description: { type: String, required: true },
     objective: { type: String },

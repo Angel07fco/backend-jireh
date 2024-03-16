@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const { getAllServices, getServiceById, createNewService } = require("./controller");
+const verifyToken = require("../../middleware/auth");
 
 // Ruta para obtener todos los servicios
-router.get("/", async (req, res) => {
+router.get("/", verifyToken, async (req, res) => {
     try {
         const services = await getAllServices();
         res.status(200).json(services);
@@ -23,7 +24,7 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/newservice", async (req, res) => {
-    let {name, description, price } = req.body;
+    let {name, img, description, price } = req.body;
 
     try {
         if (!(name && description && price)) {
@@ -32,6 +33,7 @@ router.post("/newservice", async (req, res) => {
             // good credentials, create new user
             const newService = await createNewService({
                 name,
+                img,
                 description,
                 price
             });

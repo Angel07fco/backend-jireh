@@ -92,4 +92,16 @@ const createNewUser = async (data) => {
     }
 };
 
-module.exports = { createNewUser, authenticateUser };
+const getUserById = async (userId) => {
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new Error("Usuario no encontrado");
+        }
+        return user;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+module.exports = { createNewUser, authenticateUser, getUserById };

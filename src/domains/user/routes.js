@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createNewUser, authenticateUser } = require("./controller");
+const { createNewUser, authenticateUser, getUserById } = require("./controller");
 const auth = require("./../../middleware/auth");
 const { sendVerificationOTPEmail } = require("./../email_verification/controller");
 
@@ -10,6 +10,17 @@ router.get("/private_data", auth, (req, res) => {
         status(200)
         .send(`You're in the private territory of ${req.currentUser.email}`);
 })
+
+// Obtener un usuario
+router.get("/obtenerusuario/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const userById = await getUserById(id);
+        res.status(200).json(userById);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
 
 // Signin
 router.post("/", async (req, res) => {

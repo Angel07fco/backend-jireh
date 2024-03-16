@@ -17,7 +17,7 @@ const verifyToken = async (req, res, next) => {
         return res.status(401).send("Token no válido");
     }
 
-    return next();
+    next();
 };
 
 module.exports = verifyToken;
