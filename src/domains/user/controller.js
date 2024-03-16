@@ -92,9 +92,9 @@ const createNewUser = async (data) => {
     }
 };
 
-const getUserById = async (userId) => {
+const getUserById = async (token) => {
     try {
-        const user = await User.findById(userId);
+        const user = await User.findOne({ token });
         if (!user) {
             throw new Error("Usuario no encontrado");
         }

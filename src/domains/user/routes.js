@@ -12,10 +12,10 @@ router.get("/private_data", auth, (req, res) => {
 })
 
 // Obtener un usuario
-router.get("/obtenerusuario/:id", async (req, res) => {
-    const { id } = req.params;
+router.get("/obtenerusuario/:token", async (req, res) => {
+    const { token } = req.params;
     try {
-        const userById = await getUserById(id);
+        const userById = await getUserById(token);
         res.status(200).json(userById);
     } catch (error) {
         res.status(404).send(error.message);
