@@ -88,7 +88,7 @@ router.post("/logout", auth, async(req, res) => {
     const { token } = req.body;
     try {
         await logoutUserSession(token);
-        res.status(200).json({ message: "Sesión cerrada correctamente." });
+        res.status(200).json({ msj: "Sesión cerrada correctamente." });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
