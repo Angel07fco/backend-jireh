@@ -92,6 +92,18 @@ const createNewUser = async (data) => {
     }
 };
 
+const logoutUserSession = async (token) => {
+    const user = await User.findOne({ token });
+    if (!user) {
+        throw new Error("Usuario no encontrado");
+    }
+    await User.updateOne({ token }, {
+        token: null,
+        expiratedTokenDate: null
+    });
+    return;
+}
+
 const getUserById = async (token) => {
     try {
         const user = await User.findOne({ token });
@@ -104,4 +116,4 @@ const getUserById = async (token) => {
     }
 };
 
-module.exports = { createNewUser, authenticateUser, getUserById };
+module.exports = { createNewUser, authenticateUser, logoutUserSession, getUserById };

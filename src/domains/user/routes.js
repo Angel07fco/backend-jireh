@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createNewUser, authenticateUser, getUserById } = require("./controller");
+const { createNewUser, authenticateUser, logoutUserSession, getUserById } = require("./controller");
 const auth = require("./../../middleware/auth");
 const { sendVerificationOTPEmail } = require("./../email_verification/controller");
 
@@ -84,5 +84,14 @@ router.post("/signup", async (req, res)  => {
     }
 });
 
+router.post("/logout", auth, async(req, res) => {
+    const { token } = req.body;
+    try {
+        await logoutUserSession(token);
+        res.status(200).json({ message: "Sesión cerrada correctamente." });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+})
 
 module.exports = router;
