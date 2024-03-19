@@ -1,5 +1,5 @@
 const moment = require("moment");
-const User = require("./../user/model");
+const User = require("../pet/model");
 const { sendOTP, verifyOTP, deleteOTP } = require("./../otp/controller");
 const { hashData, verifyHashedData } = require("./../../utils/hashData");
 const bcrypt = require("bcrypt");
