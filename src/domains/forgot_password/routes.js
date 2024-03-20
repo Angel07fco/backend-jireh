@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
 });
 
 // Función para validar la respuesta a la pregunta secreta del usuario
-router.post("/validateReply", async (req, res) => {
+router.post("/validatereply", async (req, res) => {
     try {
         let { email, reply_secret } = req.body;
 
@@ -47,7 +47,7 @@ router.post("/validateReply", async (req, res) => {
 });
 
 // Función para validar el código OTP enviado al email
-router.post("/validateOTP", async (req, res) => {
+router.post("/validateotp", async (req, res) => {
     try {
         let { email, otp } = req.body;
 
