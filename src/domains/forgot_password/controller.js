@@ -4,104 +4,6 @@ const { sendOTP, verifyOTP, deleteOTP } = require("./../otp/controller");
 const { hashData, verifyHashedData } = require("./../../utils/hashData");
 const bcrypt = require("bcrypt");
 
-const resetUserPassword = async ({ email, otp, newPassword }) => {
-    try {
-        const existingUser = await User.findOne({ email });
-
-        if (!existingUser) {
-            throw Error("El usuario no existe.");
-        }
-
-        if (!existingUser.verified) {
-            throw Error("El correo electrónico aún no se ha verificado. Comprueba tu bandeja de entrada.");
-        }
-
-        const validOTP = await verifyOTP({ email, otp });
-
-        if (!validOTP) {
-            throw Error("El código no coincide con nuestros registros. Verifique su bandeja de entrada.");
-        }
-
-       // Verificar si la nueva contraseña ya ha sido utilizada anteriormente
-        const isNewPasswordUsed = existingUser.previousPasswords.some((encryptedPassword) =>
-            bcrypt.compareSync(newPassword, encryptedPassword)
-        );
-
-        if (isNewPasswordUsed) {
-            throw Error("Esa contraseña ha sido utilizada anteriormente.");
-        }
-
-        // Encriptar la nueva contraseña
-        const hashedNewPassword = await hashData(newPassword);
-
-        // Actualizamos la contraseña y agregamos la nueva contraseña al array de contraseñas previas
-        await User.updateOne(
-            { email },
-            {
-                password: hashedNewPassword,
-                accountStatus: "activo",
-                isLogginIntented: 0,
-                $push: { previousPasswords: newPassword }
-            }
-        );
-
-        await deleteOTP(email);
-
-        return;
-    } catch (error) {
-        throw error;
-    }
-};
-
-const resetUserPasswordByReply = async ({ email, reply_secret, newPassword }) => {
-    try {
-        const existingUser = await User.findOne({ email });
-
-        if (!existingUser) {
-            throw Error("El usuario no existe.");
-        }
-
-        if (!existingUser.verified) {
-            throw Error("El correo electrónico aún no se ha verificado. Comprueba tu bandeja de entrada.");
-        }
-
-        const hashedReply = existingUser.reply_secret;
-        const replyMatch = await verifyHashedData(reply_secret, hashedReply);
-
-        if (!replyMatch) {
-            throw Error("La respuesta no coincide con la ingreso en el registro.");
-        }
-
-       // Verificar si la nueva contraseña ya ha sido utilizada anteriormente
-        const isNewPasswordUsed = existingUser.previousPasswords.some((encryptedPassword) =>
-            bcrypt.compareSync(newPassword, encryptedPassword)
-        );
-
-        if (isNewPasswordUsed) {
-            throw Error("Esa contraseña ha sido utilizada anteriormente.");
-        }
-
-        // Encriptar la nueva contraseña
-        const hashedNewPassword = await hashData(newPassword);
-
-        await User.updateOne(
-            { email },
-            {
-                password: hashedNewPassword,
-                accountStatus: "activo",
-                isLogginIntented: 0,
-                $push: { previousPasswords: hashedNewPassword }
-            }
-        );
-
-        await deleteOTP(email);
-
-        return;
-    } catch (error) {
-        throw error;
-    }
-};
-
 const sendPasswordResetOTPEmail = async (email) => {
     try {
         // check if an account exists
@@ -152,4 +54,100 @@ const sendPasswordResetUser = async (email) => {
     }
 };
 
-module.exports = { sendPasswordResetOTPEmail, resetUserPasswordByReply, resetUserPassword, sendPasswordResetUser };
+const validateUserReply = async ({email, reply_secret }) => {
+    try {
+        const existingUser = await User.findOne({ email });
+
+        if (!existingUser) {
+            throw Error("El usuario no existe.");
+        }
+
+        if (!existingUser.verified) {
+            throw Error("El correo electrónico aún no se ha verificado. Comprueba tu bandeja de entrada.");
+        }
+
+        const hashedReply = existingUser.reply_secret;
+        const replyMatch = await verifyHashedData(reply_secret, hashedReply);
+
+        if (!replyMatch) {
+            throw Error("La respuesta no coincide con la ingreso en el registro.");
+        }
+        return;
+    } catch (error) {
+        throw error;
+    }
+};
+
+const validateUserOTP = async ({ email, otp }) => {
+    try {
+        const existingUser = await User.findOne({ email });
+
+        if (!existingUser) {
+            throw Error("El usuario no existe.");
+        }
+
+        if (!existingUser.verified) {
+            throw Error("El correo electrónico aún no se ha verificado. Comprueba tu bandeja de entrada.");
+        }
+
+        const validOTP = await verifyOTP({ email, otp });
+
+        if (!validOTP) {
+            throw Error("El código no coincide con nuestros registros. Verifique su bandeja de entrada.");
+        }
+
+        await deleteOTP(email);
+        return;
+    } catch (error) {
+        throw error;
+    }
+};
+
+const resetPassword = async ({ email, newPassword }) => {
+    try {
+        const existingUser = await User.findOne({ email });
+
+        if (!existingUser) {
+            throw Error("El usuario no existe.");
+        }
+
+        if (!existingUser.verified) {
+            throw Error("El correo electrónico aún no se ha verificado. Comprueba tu bandeja de entrada.");
+        }
+
+        // Verificar si la nueva contraseña ya ha sido utilizada anteriormente
+        const isNewPasswordUsed = existingUser.previousPasswords.some((encryptedPassword) =>
+            bcrypt.compareSync(newPassword, encryptedPassword)
+        );
+
+        if (isNewPasswordUsed) {
+            throw Error("Esa contraseña ha sido utilizada anteriormente.");
+        }
+
+        // Encriptar la nueva contraseña
+        const hashedNewPassword = await hashData(newPassword);
+
+        // Actualizamos la contraseña y agregamos la nueva contraseña al array de contraseñas previas
+        await User.updateOne(
+            { email },
+            {
+                password: hashedNewPassword,
+                accountStatus: "activo",
+                isLogginIntented: 0,
+                $push: { previousPasswords: hashedNewPassword }
+            }
+        );
+
+        return;
+    } catch (error) {
+        throw error;
+    }
+};
+
+module.exports = {
+    sendPasswordResetOTPEmail,
+    sendPasswordResetUser,
+    validateUserReply,
+    validateUserOTP,
+    resetPassword,
+};

@@ -1,38 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { sendPasswordResetOTPEmail, resetUserPasswordByReply, resetUserPassword, sendPasswordResetUser } = require("./controller");
+const { sendPasswordResetOTPEmail, sendPasswordResetUser, validateUserReply, validateUserOTP, resetPassword } = require("./controller");
 
-router.post("/reset", async (req, res) => {
-    try {
-        let { email, otp, newPassword} = req.body;
-        if (!(email && otp && newPassword)) throw Error("Credenciales no validas.");
-
-        await resetUserPassword({ email, otp, newPassword });
-        res.status(200).json({
-            email: email,
-            msj: "Se ha restablecido la contraseña correctamente."
-        });
-    } catch (error) {
-        res.status(400).send(error.message);
-    }
-});
-
-router.post("/resetreply", async (req, res) => {
-    try {
-        let { email, reply_secret, newPassword } = req.body;
-        if (!(email && reply_secret && newPassword)) throw Error("Credenciales no validas.");
-
-        await resetUserPasswordByReply({ email, reply_secret, newPassword });
-        res.status(200).json({
-            email: email,
-            msj: "Se ha restablecido la contraseña correctamente."
-        });
-    } catch (error) {
-        res.status(400).send(error.message);
-    }
-});
-
-// Password reset request
+// Función para seleccionar el método de recuperación
 router.post("/", async (req, res) => {
     try {
         const { email, indicator } = req.body;
@@ -59,5 +29,54 @@ router.post("/", async (req, res) => {
         res.status(400).send(error.message);
     }
 });
+
+// Función para validar la respuesta a la pregunta secreta del usuario
+router.post("/validateReply", async (req, res) => {
+    try {
+        let { email, reply_secret } = req.body;
+
+        if (!(email && reply_secret)) throw Error("Credenciales no validas.");
+        await validateUserReply({ email, reply_secret });
+        res.status(200).json({
+            email: email,
+            msj: "La respuesta es correcta, puede continuar..."
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+// Función para validar el código OTP enviado al email
+router.post("/validateOTP", async (req, res) => {
+    try {
+        let { email, otp } = req.body;
+
+        if (!(email && otp)) throw Error("Credenciales no validas.");
+        await validateUserOTP({ email, otp });
+        res.status(200).json({
+            email: email,
+            msj: "El código de 4 digitos es correcto, puede continuar..."
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+router.post("/reset", async (req, res) => {
+    try {
+        let { email, newPassword} = req.body;
+        if (!(email && newPassword)) throw Error("Credenciales no validas.");
+
+        await resetPassword({ email, newPassword });
+        res.status(200).json({
+            email: email,
+            msj: "Se ha restablecido la contraseña correctamente."
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+
 
 module.exports = router;
