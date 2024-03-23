@@ -19,12 +19,6 @@ const verifyUserEmail = async ({ email, otp }) => {
 
 const sendVerificationOTPEmail = async (email) => {
     try {
-        // check if an account exits
-        const existingUser = await User.findOne({ email });
-        if (!existingUser) {
-            throw Error("No hay cuenta para el correo electrónico proporcionado.");
-        }
-
         const otpDetails = {
             email,
             subject: "Verificación del correo electrónico",

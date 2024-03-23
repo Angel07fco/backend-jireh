@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createNewUser, authenticateUser, logoutUserSession, getUserById } = require("./controller");
+const { createdUser, authenticateUser, logoutUserSession, getUserById } = require("./controller");
 const auth = require("./../../middleware/auth");
 const { sendVerificationOTPEmail } = require("./../email_verification/controller");
 
@@ -46,37 +46,33 @@ router.post("/", async (req, res) => {
     }
 });
 
-// Signup
-router.post("/signup", async (req, res)  => {
-    let { user, email, phone, password, question_secret, reply_secret } = req.body;
+// Crear una cuenta
+router.post("/crearcuenta", async(req, res) => {
+    let { user, email, phone, password } = req.body;
 
     try {
         user = user.trim();
         email = email.trim();
         phone = phone.trim();
         password = password.trim();
-        question_secret = question_secret.trim();
-        reply_secret = reply_secret.trim();
 
-        if (!(user && email && phone && password && question_secret && reply_secret)) {
+        if (!(user && email && phone && password)) {
             throw new Error("Campos de entrada vacíos!");
         } else {
-            // good credentials, create new user
-            const newUser = await createNewUser({
+            const createNewUser = await createdUser({
                 user,
                 email,
                 phone,
-                password,
-                question_secret,
-                reply_secret
+                password
             });
+
             await sendVerificationOTPEmail(email);
             res.status(200).json({
-                id: newUser._id,
-                email: newUser.email,
+                id: createNewUser._id,
+                email: createNewUser.email,
                 msj: "Se ha creado su cuenta correctamente",
-                createdAt: newUser.createdAt,
-                updatedAt: newUser.updatedAt
+                createdAt: createNewUser.createdAt,
+                updatedAt: createNewUser.updatedAt
             });
         }
     } catch (error) {
@@ -84,6 +80,7 @@ router.post("/signup", async (req, res)  => {
     }
 });
 
+// Cerrar una sesion
 router.post("/logout", auth, async(req, res) => {
     const { token } = req.body;
     try {

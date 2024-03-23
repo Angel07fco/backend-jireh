@@ -59,9 +59,9 @@ const authenticateUser = async (data) => {
     }
 }
 
-const createNewUser = async (data) => {
+const createdUser = async (data) => {
     try {
-        const { user, email, phone, password, question_secret, reply_secret } = data;
+        const { user, email, phone, password } = data;
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -74,18 +74,16 @@ const createNewUser = async (data) => {
         }
 
         const hashedPassword = await hashData(password);
-        const hashedReply = await hashData(reply_secret);
-        const newUser = new User({
+        const newCreatedUser = new User({
             user,
             email,
             phone,
             password: hashedPassword,
             previousPasswords: [hashedPassword],
-            question_secret: question_secret,
-            reply_secret: hashedReply,
             accountCreated: moment().format('DD MM YYYY, hh:mm:ss a')
         });
-        const createdUser = await newUser.save();
+        const createdUser = await newCreatedUser.save();
+
         return createdUser;
     } catch (error) {
         throw new Error(error.message);
@@ -116,4 +114,4 @@ const getUserById = async (token) => {
     }
 };
 
-module.exports = { createNewUser, authenticateUser, logoutUserSession, getUserById };
+module.exports = { createdUser, authenticateUser, logoutUserSession, getUserById };

@@ -4,7 +4,7 @@ const { getAllServices, getServiceById, createNewService } = require("./controll
 const verifyToken = require("../../middleware/auth");
 
 // Ruta para obtener todos los servicios
-router.get("/", verifyToken, async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const services = await getAllServices();
         res.status(200).json(services);
@@ -23,7 +23,7 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-router.post("/newservice", async (req, res) => {
+router.post("/newservice", verifyToken, async (req, res) => {
     let {name, img, description, price } = req.body;
 
     try {
