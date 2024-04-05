@@ -63,11 +63,13 @@ router.post("/validateotp", async (req, res) => {
 });
 
 router.post("/reset", async (req, res) => {
+    const ip = req.ip;
+    const navegador = req.headers['user-agent'];
     try {
         let { email, newPassword} = req.body;
         if (!(email && newPassword)) throw Error("Credenciales no validas.");
 
-        await resetPassword({ email, newPassword });
+        await resetPassword({ email, newPassword, ip, navegador });
         res.status(200).json({
             email: email,
             msj: "Se ha restablecido la contraseña correctamente."

@@ -4,6 +4,8 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
     user: { type: String, require: true },
     email: { type: String, require: true, unique: true },
+    nombres: { type: String, default: null },
+    apellidos: { type: String, default: null },
     img: { type: String, default: "https://res.cloudinary.com/dl8odylct/image/upload/v1710650097/jireh/perfil_jgiucu.png" },
     phone: { type: String, require: true, unique: true },
     password: { type: String, require: true },
@@ -18,7 +20,15 @@ const UserSchema = new Schema({
     token: { type: String, default: null },
     expiratedTokenDate : { type: String, default: null },
     verified: { type: Boolean, default: false },
-    isLogginIntented: { type: Number, default: 0 }
+    isLogginIntented: { type: Number, default: 0 },
+    domicilio: {
+        ciudad: { type: String, default: null },
+        municipio: { type: String, default: null },
+        localidad: { type: String, default: null },
+        codigoPostal: { type: String, default: null },
+        direccion: { type: String, default: null }
+    },
+    descripcion: { type: String, default: null }
 });
 
 const User = mongoose.model("User", UserSchema);

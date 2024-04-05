@@ -23,32 +23,42 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-router.post("/newservice", verifyToken, async (req, res) => {
-    let {name, img, description, price } = req.body;
 
+
+
+// Rutas para admins
+
+// Obtener un servicio
+router.get("/admingetservices", verifyToken, async (req, res) => {
     try {
-        if (!(name && description && price)) {
-            throw Error("Credenciales ingresadas vacias!");
-        } else {
-            // good credentials, create new user
-            const newService = await createNewService({
-                name,
-                img,
-                description,
-                price
-            });
-            res.status(200).json({
-                id: newService._id,
-                name: newService.name,
-                msj: "Se ha creado un nuevo servicio correctamente.",
-                createdAt: newService.createdAt,
-                updatedAt: newService.updatedAt
-            });
-        }
-
+        const services = await getAllServices();
+        res.status(200).json(services);
     } catch (error) {
         res.status(400).send(error.message);
     }
 });
+
+router.post("/newservice", verifyToken, async (req, res) => {
+    const { name, img, description, price } = req.body;
+
+    try {
+        const newService = await createNewService({
+            name,
+            img,
+            description,
+            price
+        });
+        res.status(200).json({
+            id: newService._id,
+            name: newService.name,
+            msj: "Se ha creado un nuevo servicio correctamente.",
+            createdAt: newService.createdAt,
+            updatedAt: newService.updatedAt
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
 
 module.exports = router;

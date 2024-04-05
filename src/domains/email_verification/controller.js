@@ -1,4 +1,4 @@
-const User = require("../pet/model");
+const User = require("../user/model");
 const { sendOTP, verifyOTP, deleteOTP } = require("./../otp/controller");
 
 const verifyUserEmail = async ({ email, otp }) => {
@@ -7,7 +7,7 @@ const verifyUserEmail = async ({ email, otp }) => {
         if (!validOTP) {
             throw Error("Se ha introducido un código no válido. Compruebe su bandeja de entrada.");
         }
-        // now update user record to show verified.
+
         await User.updateOne({ email }, { verified: true });
 
         await deleteOTP(email);

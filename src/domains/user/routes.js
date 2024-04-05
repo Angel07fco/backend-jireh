@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createdUser, authenticateUser, logoutUserSession, getUserById } = require("./controller");
+const { createdUser, authenticateUser, logoutUserSession, getUserById, updateUser, getUsers } = require("./controller");
 const auth = require("./../../middleware/auth");
 const { sendVerificationOTPEmail } = require("./../email_verification/controller");
 
@@ -24,6 +24,8 @@ router.get("/obtenerusuario/:token", async (req, res) => {
 
 // Signin
 router.post("/", async (req, res) => {
+    const ip = req.ip;
+    const navegador = req.headers['user-agent'];
     try {
         let { email, password } = req.body;
         email = email.trim();
@@ -33,7 +35,7 @@ router.post("/", async (req, res) => {
             throw Error("Credenciales ingresadas vacias!");
         }
 
-        const authenticatedUser = await authenticateUser({ email, password });
+        const authenticatedUser = await authenticateUser({ email, password, ip, navegador });
 
         res.status(200).json({
             id: authenticatedUser._id,
@@ -90,5 +92,96 @@ router.post("/logout", auth, async(req, res) => {
         res.status(500).json({ error: error.message });
     }
 })
+
+// Ruta para actualizar un usuario
+router.put("/updateuser/:id", async (req, res) => {
+    const userId = req.params.id;
+    const updateData = req.body;
+    const ip = req.ip;
+    const navegador = req.headers['user-agent'];
+
+    try {
+        const updatedUser = await updateUser(userId, updateData, ip, navegador);
+        res.status(200).json({
+            id: updatedUser._id,
+            msj: "Se ha actualizado el campo correctamente",
+            createdAt: updatedUser.createdAt,
+            updatedAt: updatedUser.updatedAt
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+
+
+
+
+// Rutas para admins
+
+// Obtener usuarios
+router.get("/admingetusers", auth, async (req, res) => {
+    const { rol } = req.body;
+    try {
+        const users = await getUsers(rol);
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
+// Crear un nuevo usuario
+router.post("/adminnewuser", auth, async(req, res) => {
+    let { user, email, phone, password } = req.body;
+
+    try {
+        user = user.trim();
+        email = email.trim();
+        phone = phone.trim();
+        password = password.trim();
+
+        if (!(user && email && phone && password)) {
+            throw new Error("Campos de entrada vacíos!");
+        } else {
+            const createNewUser = await createdUser({
+                user,
+                email,
+                phone,
+                password
+            });
+
+            await sendVerificationOTPEmail(email);
+            res.status(200).json({
+                id: createNewUser._id,
+                email: createNewUser.email,
+                msj: "Se ha creado su cuenta correctamente",
+                createdAt: createNewUser.createdAt,
+                updatedAt: createNewUser.updatedAt
+            });
+        }
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+// Actualizar un usuario
+router.put("/adminupdateuser/:id", auth, async (req, res) => {
+    const userId = req.params.id;
+    const updateData = req.body;
+    const ip = req.ip;
+    const navegador = req.headers['user-agent'];
+
+    try {
+        const updatedUser = await updateUser(userId, updateData, ip, navegador);
+        res.status(200).json({
+            id: updatedUser._id,
+            msj: "Se ha actualizado el campo correctamente",
+            createdAt: updatedUser.createdAt,
+            updatedAt: updatedUser.updatedAt
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
 
 module.exports = router;

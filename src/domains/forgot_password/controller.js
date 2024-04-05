@@ -3,6 +3,7 @@ const User = require("../user/model");
 const { sendOTP, verifyOTP, deleteOTP } = require("./../otp/controller");
 const { hashData, verifyHashedData } = require("./../../utils/hashData");
 const bcrypt = require("bcrypt");
+const { createdLog } = require("../log_inicio_sesion/controller");
 
 const sendPasswordResetOTPEmail = async (email) => {
     try {
@@ -103,15 +104,18 @@ const validateUserOTP = async ({ email, otp }) => {
     }
 };
 
-const resetPassword = async ({ email, newPassword }) => {
+const resetPassword = async ({ email, newPassword, ip, navegador }) => {
     try {
         const existingUser = await User.findOne({ email });
+
+        let accion = "Cambio de contraseña";
 
         if (!existingUser) {
             throw Error("El usuario no existe.");
         }
 
         if (!existingUser.verified) {
+            await createdLog({ usuario: existingUser._id, ip, navegador, tipo: "3", accion, descripcion: "Fallo al intentar cambiar la contraseña ya que la cuenta no ha sido verificada" });
             throw Error("El correo electrónico aún no se ha verificado. Comprueba tu bandeja de entrada.");
         }
 
@@ -121,11 +125,13 @@ const resetPassword = async ({ email, newPassword }) => {
         );
 
         if (isNewPasswordUsed) {
+            await createdLog({ usuario: existingUser._id, ip, navegador, tipo: "3", accion, descripcion: "Fallo al intentar cambiar la contraseña ya que esa contraseña ha sido ingresada anteriormente" });
             throw Error("Esa contraseña ha sido utilizada anteriormente.");
         }
 
         // Encriptar la nueva contraseña
         const hashedNewPassword = await hashData(newPassword);
+        await createdLog({ usuario: existingUser._id, ip, navegador, tipo: "3", accion, descripcion: "Hubo un cambio de contraseña correctamente" });
 
         // Actualizamos la contraseña y agregamos la nueva contraseña al array de contraseñas previas
         await User.updateOne(
