@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { createNewCita, getCitaByUserId } = require("./controller");
+const { createNewCita, getCitaByUserId, getCitasByFechaByMedico } = require("./controller");
 const auth = require("../../middleware/auth");
 
 router.post("/newcita", auth, async (req, res) => {
-    let { usuario, mascota, servicio, fecha, hora, comentarios } = req.body;
+    let { usuario, mascota, servicio, medico, fecha, hora, comentarios } = req.body;
     try {
         if (!(usuario && mascota && servicio && fecha && hora && comentarios)) {
             throw new Error("Campos de entrada vacíos!");
@@ -13,6 +13,7 @@ router.post("/newcita", auth, async (req, res) => {
                 usuario,
                 mascota,
                 servicio,
+                medico,
                 fecha,
                 hora,
                 comentarios
@@ -40,5 +41,22 @@ router.get("/:usuario", auth, async(req, res) => {
         res.status(400).send(error.message);
     }
 });
+
+router.get("/citas/:medico", auth, async(req, res) => {
+    const { medico } = req.params;
+    const { fecha } = req.body;
+
+    try {
+        const citasByFechaByMedico = await getCitasByFechaByMedico(fecha, medico);
+        const citasReducidas = citasByFechaByMedico.map(cita => ({
+            id: cita.id,
+            hora: cita.hora
+        }));
+        res.status(200).json(citasReducidas);
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
 
 module.exports = router;

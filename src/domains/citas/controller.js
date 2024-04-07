@@ -3,11 +3,12 @@ const Cita = require("./model");
 
 const createNewCita = async (data) => {
     try {
-        const { usuario, mascota, servicio, fecha, hora, comentarios } = data;
+        const { usuario, mascota, servicio, medico, fecha, hora, comentarios } = data;
         const newCita = new Cita({
             usuario,
             mascota,
             servicio,
+            medico,
             fecha,
             hora,
             comentarios,
@@ -32,4 +33,13 @@ const getCitaByUserId = async (usuario) => {
     }
 };
 
-module.exports = { createNewCita, getCitaByUserId };
+const getCitasByFechaByMedico = async (fecha, medico) => {
+    try {
+        const citas = await Cita.find({ fecha: fecha, medico: medico }).populate('usuario mascota servicio medico');
+        return citas;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+module.exports = { createNewCita, getCitaByUserId, getCitasByFechaByMedico };
