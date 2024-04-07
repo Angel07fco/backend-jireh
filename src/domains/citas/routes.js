@@ -42,9 +42,8 @@ router.get("/:usuario", auth, async(req, res) => {
     }
 });
 
-router.get("/citas/:medico", auth, async(req, res) => {
-    const { medico } = req.params;
-    const { fecha } = req.body;
+router.get("/citas/:medico/:fecha", auth, async(req, res) => {
+    const { medico, fecha } = req.params;
 
     try {
         const citasByFechaByMedico = await getCitasByFechaByMedico(fecha, medico);
