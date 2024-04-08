@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createNewPet, getPetByUserId } = require("../pet/controller");
+const { createNewPet, getPetByUserId, getPets } = require("../pet/controller");
 const auth = require("../../middleware/auth");
 
 router.post("/newpet", auth, async (req, res)  => {
@@ -44,6 +44,28 @@ router.post("/newpet", auth, async (req, res)  => {
     }
 });
 
+router.get("/", auth, async (req, res) => {
+    try {
+        const pets = await getPets();
+        const petReducido = pets.map(pet => ({
+            id: pet.id,
+            usuario: pet.userId.user,
+            mascota: pet.name,
+            imagen: pet.img,
+            categoria: pet.categoria,
+            especie: pet.especie,
+            raza: pet.raza,
+            genero: pet.genero,
+            tamano: pet.tamano,
+            age: pet.age,
+            peso: pet.peso
+        }));
+        res.status(200).json(petReducido);
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+})
+
 router.get("/:userId", auth, async(req, res) => {
     const { userId } = req.params;
 
@@ -56,7 +78,6 @@ router.get("/:userId", auth, async(req, res) => {
 });
 
 router.put("/", auth, async(req, res) => {
-    
 });
 
 module.exports = router;

@@ -25,6 +25,15 @@ const createNewPet = async (data) => {
     }
 };
 
+const getPets = async () => {
+    try {
+        const pet = await Pet.find().populate('userId');
+        return pet;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
 const getPetByUserId = async (userId) => {
     try {
         const pet = await Pet.find({ userId });
@@ -37,4 +46,4 @@ const getPetByUserId = async (userId) => {
     }
 };
 
-module.exports = { createNewPet, getPetByUserId };
+module.exports = { createNewPet, getPetByUserId, getPets };
