@@ -53,6 +53,10 @@ router.get("/:userId", auth, async(req, res) => {
     } catch (error) {
         res.status(400).send(error.message);
     }
-})
+});
+
+router.put("/", auth, async(req, res) => {
+    
+});
 
 module.exports = router;
