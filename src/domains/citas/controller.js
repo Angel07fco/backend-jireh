@@ -23,7 +23,7 @@ const createNewCita = async (data) => {
 
 const getCitaByUserId = async (usuario) => {
     try {
-        const cita = await Cita.find({ usuario });
+        const cita = await Cita.find({ usuario }).populate('usuario mascota servicio medico');
         if (!cita) {
             throw new Error("Usuario no encontrado");
         }
