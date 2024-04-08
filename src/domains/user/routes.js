@@ -120,8 +120,8 @@ router.put("/updateuser/:id", async (req, res) => {
 // Rutas para admins
 
 // Obtener usuarios
-router.get("/admingetusers", auth, async (req, res) => {
-    const { rol } = req.body;
+router.get("/admingetusers/:rol", auth, async (req, res) => {
+    const { rol } = req.params;
     try {
         const users = await getUsers(rol);
         res.status(200).json(users);
