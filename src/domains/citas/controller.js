@@ -1,6 +1,19 @@
 const moment = require("moment");
 const Cita = require("./model");
 
+const getValidationPet = async (fecha, mascota) => {
+    let validation = false;
+    try {
+        const existingCita = await Cita.findOne({ mascota, fecha });
+        if (existingCita) {
+            validation = true;
+        }
+        return validation;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
 const createNewCita = async (data) => {
     try {
         const { usuario, mascota, servicio, medico, fecha, hora, comentarios } = data;
@@ -51,4 +64,4 @@ const getCitasByFechaByMedico = async (fecha, medico) => {
     }
 }
 
-module.exports = { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitas };
+module.exports = { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitas, getValidationPet };

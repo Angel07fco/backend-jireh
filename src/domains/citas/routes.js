@@ -1,7 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitas } = require("./controller");
+const { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitas, getValidationPet } = require("./controller");
 const auth = require("../../middleware/auth");
+
+router.get("/validation/:fecha/:mascota", auth, async (req, res) => {
+    const { fecha, mascota } = req.params;
+    try {
+        const validationPet = await getValidationPet(fecha, mascota);
+        res.status(200).json(validationPet);
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
 
 router.post("/newcita", auth, async (req, res) => {
     let { usuario, mascota, servicio, medico, fecha, hora, comentarios } = req.body;
