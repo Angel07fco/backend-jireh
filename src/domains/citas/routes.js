@@ -90,11 +90,7 @@ router.delete("/cancelar/:citaId", auth, async (req, res) => {
 
     try {
         const estadoCita = await deleteCita(citaId);
-        if (estadoCita) {
-            res.status(200).json({ mensaje: "La cita ha sido cancelada correctamente." });
-        } else {
-            res.status(200).json({ mensaje: "No se puede cancelar la cita. Debe ser al menos dos días antes de la cita." });
-        }
+        res.status(200).json({ mensaje: "La cita ha sido cancelada correctamente." });
     } catch (error) {
         res.status(400).send(error.message);
     }

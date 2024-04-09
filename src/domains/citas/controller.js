@@ -87,9 +87,9 @@ const deleteCita = async (citaId) => {
         // Verificar si la cita se puede cancelar (si es al menos dos días antes)
         if (diffDias > 1) {
             await Cita.findByIdAndDelete(citaId);
-            return true;
+            throw new Error("No se puede cancelar la cita. Debe ser al menos dos días antes de la cita.");
         } else {
-            return false;
+            return;
         }
     } catch (error) {
         throw new Error(error.message);
