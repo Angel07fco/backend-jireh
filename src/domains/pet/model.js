@@ -13,7 +13,8 @@ const PetSchema = new Schema({
     img: { type: String, default: "https://res.cloudinary.com/dl8odylct/image/upload/v1710824019/jireh/animaldefault_khthes.jpg" },
     petCreated : { type: String },
     estado: { type: String, default: "activo" },
-    userId: { type: Schema.Types.ObjectId, ref: 'User' }
+    userId: { type: Schema.Types.ObjectId, ref: 'User' },
+    estado: { type: String, default: "activo" }
 });
 
 const Pet = mongoose.model("Pet", PetSchema);

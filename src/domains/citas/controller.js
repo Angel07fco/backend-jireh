@@ -19,7 +19,7 @@ const createNewCita = async (data) => {
         const { usuario, mascota, servicio, medico, fecha, hora, comentarios } = data;
         const existingCita = await Cita.findOne({ mascota, fecha });
         if (existingCita) {
-            throw new Error(`Ya ha agendado una cita para la mascota: ${mascota}, el dia de ${fecha}`);
+            throw new Error(`Ya se ha agendado una cita para su mascota el dia ${fecha}`);
         }
 
         const newCita = new Cita({
@@ -69,4 +69,51 @@ const getCitasByFechaByMedico = async (fecha, medico) => {
     }
 }
 
-module.exports = { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitas, getValidationPet };
+const deleteCita = async (citaId) => {
+    try {
+        const cita = await Cita.findById(citaId);
+        if (!cita) {
+            throw new Error("Cita no encontrada");
+        }
+
+        // Obtener la fecha actual y de la cita
+        const fechaActual = moment();
+        const fechaCita = moment(cita.fecha, 'DD-MM-YYYY');
+
+        // Calcular la diferencia en días
+        const diferenciaDias = fechaCita.diff(fechaActual, 'days');
+        let diffDias = diferenciaDias + 1;
+
+        // Verificar si la cita se puede cancelar (si es al menos dos días antes)
+        if (diffDias > 1) {
+            await Cita.findByIdAndDelete(citaId);
+            return true;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+const updateCita = async (citaId, updateData) => {
+    try {
+        const cita = await Cita.findById(citaId);
+
+        if (!cita) {
+            throw new Error("Cita no encontrada");
+        }
+
+        for (const [key, value] of Object.entries(updateData)) {
+            cita[key] = value;
+        }
+
+        // Guarda los cambios en la base de datos
+        const updatedCita = await cita.save();
+        return updatedCita;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+module.exports = { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitas, getValidationPet, deleteCita, updateCita };

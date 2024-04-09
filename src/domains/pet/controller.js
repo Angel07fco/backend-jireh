@@ -46,4 +46,24 @@ const getPetByUserId = async (userId) => {
     }
 };
 
-module.exports = { createNewPet, getPetByUserId, getPets };
+const updatePet = async (petId, updateData) => {
+    try {
+        const pet = await Pet.findById(petId);
+
+        if (!pet) {
+            throw new Error("Mascota no encontrada");
+        }
+
+        for (const [key, value] of Object.entries(updateData)) {
+            pet[key] = value;
+        }
+
+        // Guarda los cambios en la base de datos
+        const updatedPet = await pet.save();
+        return updatedPet;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+module.exports = { createNewPet, getPetByUserId, getPets, updatePet };

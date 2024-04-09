@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitas, getValidationPet } = require("./controller");
+const { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitas, getValidationPet, deleteCita, updateCita } = require("./controller");
 const auth = require("../../middleware/auth");
 
 router.get("/validation/:fecha/:mascota", auth, async (req, res) => {
@@ -85,5 +85,36 @@ router.get("/citas/:medico/:fecha", auth, async(req, res) => {
     }
 });
 
+router.delete("/cancelar/:citaId", auth, async (req, res) => {
+    const { citaId } = req.params;
+
+    try {
+        const estadoCita = await deleteCita(citaId);
+        if (estadoCita) {
+            res.status(200).json({ mensaje: "La cita ha sido cancelada correctamente." });
+        } else {
+            res.status(200).json({ mensaje: "No se puede cancelar la cita. Debe ser al menos dos días antes de la cita." });
+        }
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+router.put("/actualizar/:citaId", auth, async (req, res) => {
+    const { citaId } = req.params;
+    const updateData = req.body;
+
+    try {
+        const updatedCita = await updateCita(citaId, updateData);
+        res.status(200).json({
+            id: updatedCita._id,
+            msj: "Se ha actualizado correctamente",
+            createdAt: updatedCita.createdAt,
+            updatedAt: updatedCita.updatedAt
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
 
 module.exports = router;

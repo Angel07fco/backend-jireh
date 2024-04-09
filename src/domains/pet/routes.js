@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createNewPet, getPetByUserId, getPets } = require("../pet/controller");
+const { createNewPet, getPetByUserId, getPets, updatePet } = require("../pet/controller");
 const auth = require("../../middleware/auth");
 
 router.post("/newpet", auth, async (req, res)  => {
@@ -77,7 +77,21 @@ router.get("/:userId", auth, async(req, res) => {
     }
 });
 
-router.put("/", auth, async(req, res) => {
+router.put("/actualizar/:petId", auth, async (req, res) => {
+    const { petId } = req.params;
+    const updateData = req.body;
+
+    try {
+        const updatePett = await updatePet(petId, updateData);
+        res.status(200).json({
+            id: updatePett._id,
+            msj: "Se ha actualizado correctamente",
+            createdAt: updatePett.createdAt,
+            updatedAt: updatePett.updatedAt
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
 });
 
 module.exports = router;
