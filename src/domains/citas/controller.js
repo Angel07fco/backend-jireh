@@ -16,12 +16,12 @@ const getValidationPet = async (fecha, mascota) => {
 
 const createNewCita = async (data) => {
     try {
+        const { usuario, mascota, servicio, medico, fecha, hora, comentarios } = data;
         const existingCita = await Cita.findOne({ mascota, fecha });
         if (existingCita) {
             throw new Error(`Ya ha agendado una cita para la mascota: ${mascota}, el dia de ${fecha}`);
         }
 
-        const { usuario, mascota, servicio, medico, fecha, hora, comentarios } = data;
         const newCita = new Cita({
             usuario,
             mascota,
