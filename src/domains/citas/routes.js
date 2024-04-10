@@ -90,7 +90,7 @@ router.delete("/cancelar/:citaId", auth, async (req, res) => {
 
     try {
         const estadoCita = await deleteCita(citaId);
-        res.status(200).json({ mensaje: "La cita ha sido cancelada correctamente." });
+        res.status(200).json({ mensaje: estadoCita });
     } catch (error) {
         res.status(400).send(error.message);
     }
