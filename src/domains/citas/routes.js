@@ -102,12 +102,7 @@ router.put("/actualizar/:citaId", auth, async (req, res) => {
 
     try {
         const updatedCita = await updateCita(citaId, updateData);
-        res.status(200).json({
-            id: updatedCita._id,
-            msj: "Se ha actualizado correctamente",
-            createdAt: updatedCita.createdAt,
-            updatedAt: updatedCita.updatedAt
-        });
+        res.status(200).json({ mensaje: updatedCita });
     } catch (error) {
         res.status(400).send(error.message);
     }

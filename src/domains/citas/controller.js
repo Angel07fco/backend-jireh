@@ -107,13 +107,26 @@ const updateCita = async (citaId, updateData) => {
             throw new Error("Cita no encontrada");
         }
 
-        for (const [key, value] of Object.entries(updateData)) {
-            cita[key] = value;
-        }
+        // Obtener la fecha actual y de la cita
+        const fechaActual = moment();
+        const fechaCita = moment(cita.fecha, 'DD-MM-YYYY');
 
-        // Guarda los cambios en la base de datos
-        const updatedCita = await cita.save();
-        return updatedCita;
+        // Calcular la diferencia en días
+        const diferenciaDias = fechaCita.diff(fechaActual, 'days');
+        let diffDias = diferenciaDias + 1;
+
+        let msg = "";
+        if (diffDias > 1) {
+            for (const [key, value] of Object.entries(updateData)) {
+                cita[key] = value;
+            }
+            // Guarda los cambios en la base de datos
+            await cita.save();
+            msg = "La cita ha sido actualizada correctamente.";
+        } else {
+            msg = "No se puede actualizar la cita. Debe ser al menos 1 día antes de la cita.";
+        }
+        return msg;
     } catch (error) {
         throw new Error(error.message);
     }
