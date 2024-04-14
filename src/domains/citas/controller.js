@@ -116,7 +116,7 @@ const updateCita = async (citaId, updateData) => {
         let diffDias = diferenciaDias + 1;
 
         let msg = "";
-        if (diffDias > 1) {
+        if (diffDias > 0) {
             for (const [key, value] of Object.entries(updateData)) {
                 cita[key] = value;
             }
