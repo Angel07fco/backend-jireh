@@ -71,7 +71,6 @@ router.post("/crearcuenta", async(req, res) => {
                 phone,
                 password
             });
-
             await sendVerificationOTPEmail(email);
             res.status(200).json({
                 id: createNewUser._id,
