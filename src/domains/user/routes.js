@@ -3,6 +3,7 @@ const router = express.Router();
 const { createdUser, authenticateUser, logoutUserSession, getUserById, updateUser, getUsers } = require("./controller");
 const auth = require("./../../middleware/auth");
 const { sendVerificationOTPEmail } = require("./../email_verification/controller");
+const axios = require('axios');
 
 // protected route
 router.get("/private_data", auth, (req, res) => {
@@ -24,16 +25,19 @@ router.get("/obtenerusuario/:token", async (req, res) => {
 
 // Signin
 router.post("/", async (req, res) => {
-    const ip = req.ip;
-    const navegador = req.headers['user-agent'];
     try {
         let { email, password } = req.body;
         email = email.trim();
         password = password.trim();
 
         if (!(email && password)) {
-            throw Error("Credenciales ingresadas vacias!");
+            throw Error("Credenciales ingresadas vacías!");
         }
+
+        const ipResponse = await axios.get('https://api.ipify.org/');
+        const ip = ipResponse.data.trim();
+
+        const navegador = req.headers['user-agent'];
 
         const authenticatedUser = await authenticateUser({ email, password, ip, navegador });
 
@@ -97,10 +101,14 @@ router.post("/logout", auth, async(req, res) => {
 router.put("/updateuser/:id", async (req, res) => {
     const userId = req.params.id;
     const updateData = req.body;
-    const ip = req.ip;
-    const navegador = req.headers['user-agent'];
 
     try {
+        // Obtener la dirección IP pública
+        const ipResponse = await axios.get('https://api.ipify.org/');
+        const ip = ipResponse.data.trim(); // Eliminar cualquier espacio en blanco alrededor de la dirección IP
+
+        const navegador = req.headers['user-agent'];
+
         const updatedUser = await updateUser(userId, updateData, ip, navegador);
         res.status(200).json({
             id: updatedUser._id,
@@ -112,7 +120,6 @@ router.put("/updateuser/:id", async (req, res) => {
         res.status(400).send(error.message);
     }
 });
-
 
 
 

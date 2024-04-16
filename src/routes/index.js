@@ -10,6 +10,7 @@ const petsRoutes = require("./../domains/pet");
 const citasRoutes = require("./../domains/citas");
 const veterinariosRoutes = require("./../domains/veterinarios");
 const logSession = require("./../domains/log_inicio_sesion");
+const horariosRoutes = require("./../domains/horarios");
 
 router.use("/user", userRoutes);
 router.use("/otp", OTPRoutes);
@@ -20,6 +21,7 @@ router.use("/services", servicesRoutes);
 router.use("/pet", petsRoutes);
 router.use("/cita", citasRoutes);
 router.use("/veterinario", veterinariosRoutes);
+router.use("/horario", horariosRoutes);
 
 router.use("/log_inicio_sesion", logSession);
 
