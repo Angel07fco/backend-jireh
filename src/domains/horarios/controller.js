@@ -22,6 +22,22 @@ const getHorariosDisponibles = async (medicoId, dia) => {
     }
 };
 
+const getHorariosDisponiblesTodos = async (medicoId, dia) => {
+    try {
+        // Buscar los horarios para el médico y día especificados
+        const horarios = await Horario.find({ medico: medicoId });
+
+        // Verificar si se encontraron horarios para ese día y médico
+        if (!horarios) {
+            return [];
+        }
+
+        // Devolver solo los campos horaInicio y horaFin
+        return horarios;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
 
 // Función para generar los horarios disponibles
 const generarHorariosDisponibles = (horaInicio, horaFin) => {
@@ -102,4 +118,4 @@ const actualizarHorario = async (data) => {
     }
 };
 
-module.exports = { getHorariosDisponibles, createdHorarios, actualizarHorario };
+module.exports = { getHorariosDisponibles, createdHorarios, actualizarHorario, getHorariosDisponiblesTodos };

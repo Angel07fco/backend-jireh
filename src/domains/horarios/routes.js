@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("./../../middleware/auth");
-const { getHorariosDisponibles, createdHorarios, actualizarHorario } = require("./controller");
+const { getHorariosDisponibles, createdHorarios, actualizarHorario, getHorariosDisponiblesTodos } = require("./controller");
 
 // Ruta para agregar un horario
 router.post('/:medicoId', async (req, res) => {
@@ -32,6 +32,18 @@ router.get("/:medico/:dia", async (req, res) => {
 
     try {
         const horariosDisponibles = await getHorariosDisponibles(medico, dia);
+        res.status(200).json(horariosDisponibles);
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+// Ruta para obtener todos los horarios disponibles del medico
+router.get("/:medico", async (req, res) => {
+    const { medico } = req.params;
+
+    try {
+        const horariosDisponibles = await getHorariosDisponiblesTodos(medico);
         res.status(200).json(horariosDisponibles);
     } catch (error) {
         res.status(400).send(error.message);
