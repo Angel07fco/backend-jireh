@@ -14,7 +14,8 @@ const getHorariosDisponibles = async (medicoId, dia) => {
         // Devolver solo los campos horaInicio y horaFin
         return {
             horaInicio: horarios.horaInicio,
-            horaFin: horarios.horaFin
+            horaFin: horarios.horaFin,
+            horariosDisponibles: horarios.horariosDisponibles
         };
     } catch (error) {
         throw new Error(error.message);
