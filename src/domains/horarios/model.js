@@ -18,6 +18,10 @@ const HorarioSchema = new mongoose.Schema({
     horaFin: {
         type: String,
         required: true
+    },
+    horariosDisponibles: {
+        type: [String],
+        default: []
     }
 });
 

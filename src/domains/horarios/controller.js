@@ -1,4 +1,5 @@
 const Horario = require("./model");
+const moment = require("moment");
 
 const getHorariosDisponibles = async (medicoId, dia) => {
     try {
@@ -20,6 +21,23 @@ const getHorariosDisponibles = async (medicoId, dia) => {
     }
 };
 
+
+// Función para generar los horarios disponibles
+const generarHorariosDisponibles = (horaInicio, horaFin) => {
+    const horariosDisponibles = [];
+    let horaActual = moment(horaInicio, 'HH:mm');
+
+    while (horaActual.isBefore(moment(horaFin, 'HH:mm'))) {
+        const horaInicioStr = horaActual.format('HH:mm');
+        horaActual.add(1, 'hour');
+        const horaFinStr = horaActual.format('HH:mm');
+        const horarioDisponible = `${horaInicioStr}-${horaFinStr}`;
+        horariosDisponibles.push(horarioDisponible);
+    }
+
+    return horariosDisponibles;
+};
+
 const createdHorarios = async (data) => {
     const { medicoId, dia, horaInicio, horaFin } = data;
 
@@ -32,12 +50,16 @@ const createdHorarios = async (data) => {
             throw new Error(`Ya existen horarios registrados para el día ${dia}`);
         }
 
+        // Generar los horarios disponibles
+        const horariosDisponibles = generarHorariosDisponibles(horaInicio, horaFin);
+
         // Si no existe un horario registrado para ese día y médico, guardar el nuevo horario
         const newHorarios = new Horario({
             medico: medicoId,
             date: dia,
             horaInicio,
-            horaFin
+            horaFin,
+            horariosDisponibles
         });
         await newHorarios.save();
         return newHorarios;
@@ -57,6 +79,11 @@ const actualizarHorario = async (data) => {
         if (!nuevosDatos) {
             throw new Error(`No existen horarios registrados para el día ${dia}`);
         }
+
+        // Generar los nuevos horarios disponibles
+        const horariosDisponibles = generarHorariosDisponibles(horaInicio, horaFin);
+
+        nuevosDatos.horariosDisponibles = horariosDisponibles;
 
         // Actualizar los campos de horaInicio y horaFin si están presentes en los nuevos datos
         if (nuevosDatos.horaInicio) {

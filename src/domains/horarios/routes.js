@@ -18,6 +18,7 @@ router.post('/:medicoId', async (req, res) => {
         res.status(200).json({
             id: createNewHorarios._id,
             dia: createNewHorarios.dia,
+            horariosDisponibles: createNewHorarios.horariosDisponibles,
             msj: "Se han agregado correctamente los horarios",
         });
     } catch (error) {
@@ -51,6 +52,7 @@ router.patch('/:medicoId', async (req, res) => {
         res.status(200).json({
             id: horarioActualizado._id,
             date: horarioActualizado.date,
+            horariosDisponibles: horarioActualizado.horariosDisponibles,
             msj: "Se han actualizado correctamente los horarios",
         });
     } catch (error) {
