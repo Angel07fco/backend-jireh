@@ -33,4 +33,18 @@ const getVeterinarios = async () => {
     }
 };
 
-module.exports = { createdVeterinario, getVeterinarios };
+const getVeterinario = async (medicoId) => {
+    try {
+        const vete = await Veterinario.findById(medicoId);
+
+        if (!vete) {
+            throw Error("No encontramos ningún médico con ese Id")
+        }
+
+        return vete;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+module.exports = { createdVeterinario, getVeterinarios, getVeterinario };
