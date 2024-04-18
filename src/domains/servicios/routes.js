@@ -24,8 +24,6 @@ router.get("/:id", async (req, res) => {
 });
 
 
-
-
 // Rutas para admins
 
 // Obtener un servicio
@@ -39,14 +37,15 @@ router.get("/admingetservices", verifyToken, async (req, res) => {
 });
 
 router.post("/newservice", verifyToken, async (req, res) => {
-    const { name, img, description, price } = req.body;
+    const { name, img, description, price, duracion } = req.body;
 
     try {
         const newService = await createNewService({
             name,
             img,
             description,
-            price
+            price,
+            duracion
         });
         res.status(200).json({
             id: newService._id,

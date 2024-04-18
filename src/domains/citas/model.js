@@ -7,8 +7,10 @@ const CitaSchema = new Schema({
     servicio: { type: Schema.Types.ObjectId, ref: 'Service' },
     medico: { type: Schema.Types.ObjectId, ref: 'Veterinario' },
     fecha: { type: String, require: true },
-    hora: { type: String, require: true },
+    horaInicio: { type: String, require: true },
+    horaFin: { type: String, require: true },
     comentarios: { type: String },
+    state: { type: Boolean, default: true },
     citaCreated : { type: String }
 });
 

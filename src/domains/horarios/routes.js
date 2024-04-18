@@ -1,17 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("./../../middleware/auth");
-const { getHorariosDisponibles, createdHorarios } = require("./controller");
+const { getHorariosDisponibles, createdHorarios, actualizarHorario } = require("./controller");
 
 // Ruta para agregar un horario
 router.post('/:medicoId', async (req, res) => {
     const { medicoId } = req.params;
-    const { dia, horarios } = req.body;
+    const { dia, horaInicio, horaFin } = req.body;
     try {
         const createNewHorarios = await createdHorarios({
             medicoId,
             dia,
-            horarios
+            horaInicio,
+            horaFin
         });
 
         res.status(200).json({
@@ -36,7 +37,25 @@ router.get("/:medico/:dia", async (req, res) => {
     }
 });
 
-// Ruta para deshabilitar horarios
-//router.patch('/:veterinarianId/:dia', disableSlots);
+// Ruta para actualizar un horario
+router.patch('/:medicoId', async (req, res) => {
+    const { medicoId } = req.params;
+    const { dia, horaInicio, horaFin } = req.body;
+    try {
+        const horarioActualizado = await actualizarHorario({
+            medicoId,
+            dia,
+            horaInicio,
+            horaFin
+        });
+        res.status(200).json({
+            id: horarioActualizado._id,
+            date: horarioActualizado.date,
+            msj: "Se han actualizado correctamente los horarios",
+        });
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
 
 module.exports = router;
