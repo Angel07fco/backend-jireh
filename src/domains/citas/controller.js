@@ -67,7 +67,7 @@ const getCitasByFechaByMedico = async (fecha, medico) => {
     } catch (error) {
         throw new Error(error.message);
     }
-}
+};
 
 const deleteCita = async (citaId) => {
     try {

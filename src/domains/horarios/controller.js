@@ -1,3 +1,4 @@
+const { getCitasByFechaByMedico } = require("../citas/controller");
 const Horario = require("./model");
 const moment = require("moment");
 
@@ -55,6 +56,22 @@ const generarHorariosDisponibles = (horaInicio, horaFin) => {
     return horariosDisponibles;
 };
 
+const verificarCitasEnHorarioNuevo = (horarioNuevo, citasAgendadas) => {
+    // Convertir los horarios de citas agendadas en un conjunto para una búsqueda más eficiente
+    const citasSet = new Set(citasAgendadas);
+
+    // Iterar sobre las citas agendadas
+    for (const cita of citasSet) {
+        // Verificar si la cita agendada no está en el conjunto del nuevo horario
+        if (!horarioNuevo.includes(cita)) {
+            return false;
+        }
+    }
+
+    // Si todas las citas agendadas están dentro del nuevo horario
+    return true;
+};
+
 const createdHorarios = async (data) => {
     const { medicoId, dia, horaInicio, horaFin } = data;
 
@@ -95,27 +112,63 @@ const actualizarHorario = async (data) => {
         // Si ya existe un horario registrado para ese día y médico, lanzar un error
         if (!nuevosDatos) {
             throw new Error(`No existen horarios registrados para el día ${dia}`);
+        }else {
+            // Comprobar si hay citas agendadas para el médico en el día especificado
+            const citas = await getCitasByFechaByMedico(dia, medicoId);
+
+            // Generar los nuevos horarios disponibles
+            const horariosDisponibles = generarHorariosDisponibles(horaInicio, horaFin);
+            let citasAgendadas = [];
+            if (citas.length > 0) {
+                citas.map((item, index) => {
+                    citasAgendadas.push(item.hora);
+                });
+                console.log("Horario nuevo: " + horariosDisponibles)
+                console.log("Citas agendadas: " + citasAgendadas);
+                const vefifyHorario = verificarCitasEnHorarioNuevo(horariosDisponibles, citasAgendadas);
+                if (vefifyHorario === false) {
+                    throw new Error(`No se puede actualizar el horario porque hay citas agendadas para el dia ${dia} que no se estan incluyendo en el nuevo horario`);
+                }
+            }
+
+            nuevosDatos.horariosDisponibles = horariosDisponibles;
+
+            // Actualizar los campos de horaInicio y horaFin si están presentes en los nuevos datos
+            if (nuevosDatos.horaInicio) {
+                nuevosDatos.horaInicio = horaInicio;
+            }
+            if (nuevosDatos.horaFin) {
+                nuevosDatos.horaFin = horaFin;
+            }
+
+            // Guardar los cambios
+            const horarioActualizado = await nuevosDatos.save();
+            return horarioActualizado;
         }
-
-        // Generar los nuevos horarios disponibles
-        const horariosDisponibles = generarHorariosDisponibles(horaInicio, horaFin);
-
-        nuevosDatos.horariosDisponibles = horariosDisponibles;
-
-        // Actualizar los campos de horaInicio y horaFin si están presentes en los nuevos datos
-        if (nuevosDatos.horaInicio) {
-            nuevosDatos.horaInicio = horaInicio;
-        }
-        if (nuevosDatos.horaFin) {
-            nuevosDatos.horaFin = horaFin;
-        }
-
-        // Guardar los cambios
-        const horarioActualizado = await nuevosDatos.save();
-        return horarioActualizado;
     } catch (error) {
         throw new Error(error.message);
     }
 };
 
-module.exports = { getHorariosDisponibles, createdHorarios, actualizarHorario, getHorariosDisponiblesTodos };
+const eliminarHorario = async (medicoId, dia) => {
+    try {
+        // Comprobar si hay citas agendadas para el médico en el día especificado
+        const citas = await getCitasByFechaByMedico(dia, medicoId);
+        if (citas.length > 0) {
+            throw new Error(`No se puede eliminar el horario porque hay citas agendadas para el día ${dia}`);
+        }
+
+        // Buscar y eliminar el horario correspondiente al médico y día especificados
+        const horarioEliminado = await Horario.findOneAndDelete({ medico: medicoId, date: dia });
+
+        if (!horarioEliminado) {
+            throw new Error(`No se encontró ningún horario para el día ${dia}`);
+        }
+
+        return horarioEliminado;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+module.exports = { getHorariosDisponibles, createdHorarios, actualizarHorario, getHorariosDisponiblesTodos, eliminarHorario };
