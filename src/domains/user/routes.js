@@ -43,6 +43,7 @@ router.post("/", async (req, res) => {
 
         res.status(200).json({
             id: authenticatedUser._id,
+            rol: authenticatedUser.rol,
             email: authenticatedUser.email,
             token: authenticatedUser.token,
             msj: "Has iniciado sesión correctamente."
