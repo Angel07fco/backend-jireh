@@ -24,7 +24,7 @@ router.get("/obtenerusuario/:token", async (req, res) => {
 });
 
 // Obtener un usuario por accesoWearOs
-router.get("/obtenerusuario/:accesoWearOs", async (req, res) => {
+router.get("/obtenerusuariowearos/:accesoWearOs", async (req, res) => {
     const { accesoWearOs } = req.params;
     try {
         const userById = await getUserByAccesoWearOs(accesoWearOs);
