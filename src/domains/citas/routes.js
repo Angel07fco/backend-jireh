@@ -59,7 +59,7 @@ router.get("/", auth, async (req, res) => {
     }
 });
 
-router.get("/:usuario", auth, async(req, res) => {
+router.get("/:usuario", async(req, res) => {
     const { usuario } = req.params;
 
     try {
