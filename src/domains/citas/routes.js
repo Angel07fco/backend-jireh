@@ -73,7 +73,7 @@ router.get("/:usuario", async(req, res) => {
 router.get("wearos/:usuario", async(req, res) => {
     const { usuario } = req.params;
     try {
-        const citas = await getCitaByUserId(usuario);
+        const citas = await getCitaByUserIdWearOs(usuario);
         const citasReducidas = citas.map(cita => ({
             mascota: cita.mascota.name,
             servicio: cita.servicio.name,
