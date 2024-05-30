@@ -70,7 +70,7 @@ router.get("/:usuario", async(req, res) => {
     }
 });
 
-router.get("wearos/:usuario", async(req, res) => {
+router.get("/wearos/:usuario", async(req, res) => {
     const { usuario } = req.params;
     try {
         const citas = await getCitaByUserIdWearOs(usuario);
