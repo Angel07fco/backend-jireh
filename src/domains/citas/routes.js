@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitas, getValidationPet, deleteCita, updateCita } = require("./controller");
+const { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitaByUserIdWearOs, getCitas, getValidationPet, deleteCita, updateCita } = require("./controller");
 const auth = require("../../middleware/auth");
 
 router.get("/validation/:fecha/:mascota", auth, async (req, res) => {
@@ -65,6 +65,21 @@ router.get("/:usuario", async(req, res) => {
     try {
         const citas = await getCitaByUserId(usuario);
         res.status(200).json(citas);
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+router.get("wearos/:usuario", async(req, res) => {
+    const { usuario } = req.params;
+    try {
+        const citas = await getCitaByUserId(usuario);
+        const citasReducidas = citas.map(cita => ({
+            mascota: cita.mascota.name,
+            servicio: cita.servicio.name,
+            fecha: cita.fecha
+        }));
+        res.status(200).json(citasReducidas);
     } catch (error) {
         res.status(400).send(error.message);
     }

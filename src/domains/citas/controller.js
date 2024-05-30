@@ -60,6 +60,18 @@ const getCitaByUserId = async (usuario) => {
     }
 };
 
+const getCitaByUserIdWearOs = async (usuario) => {
+    try {
+        const cita = await Cita.find({ usuario }).populate('usuario mascota servicio medico');
+        if (!cita) {
+            throw new Error("Usuario no encontrado");
+        }
+        return cita;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
 const getCitasByFechaByMedico = async (fecha, medico) => {
     try {
         const citas = await Cita.find({ fecha: fecha, medico: medico }).populate('usuario mascota servicio medico');
@@ -132,4 +144,4 @@ const updateCita = async (citaId, updateData) => {
     }
 };
 
-module.exports = { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitas, getValidationPet, deleteCita, updateCita };
+module.exports = { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitas, getValidationPet, deleteCita, getCitaByUserIdWearOs, updateCita };
