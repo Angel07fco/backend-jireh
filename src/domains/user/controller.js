@@ -150,6 +150,18 @@ const getUserById = async (token) => {
     }
 };
 
+const getUserByAccesoWearOs = async (accesoWearOs) => {
+    try {
+        const user = await User.findOne({ accesoWearOs });
+        if (!user) {
+            throw new Error("Usuario no encontrado");
+        }
+        return user;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
 const getUsers = async (rol) => {
     try {
         // Si se proporciona un rol, se filtran los usuarios por ese rol
@@ -167,4 +179,4 @@ const getUsers = async (rol) => {
 }
 
 
-module.exports = { createdUser, authenticateUser, logoutUserSession, getUserById, updateUser, getUsers };
+module.exports = { createdUser, authenticateUser, logoutUserSession, getUserById, updateUser, getUsers, getUserByAccesoWearOs };

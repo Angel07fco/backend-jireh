@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createdUser, authenticateUser, logoutUserSession, getUserById, updateUser, getUsers } = require("./controller");
+const { createdUser, authenticateUser, logoutUserSession, getUserById, getUserByAccesoWearOs, updateUser, getUsers } = require("./controller");
 const auth = require("./../../middleware/auth");
 const { sendVerificationOTPEmail } = require("./../email_verification/controller");
 const axios = require('axios');
@@ -17,6 +17,17 @@ router.get("/obtenerusuario/:token", async (req, res) => {
     const { token } = req.params;
     try {
         const userById = await getUserById(token);
+        res.status(200).json(userById);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
+// Obtener un usuario por accesoWearOs
+router.get("/obtenerusuario/:accesoWearOs", async (req, res) => {
+    const { accesoWearOs } = req.params;
+    try {
+        const userById = await getUserByAccesoWearOs(accesoWearOs);
         res.status(200).json(userById);
     } catch (error) {
         res.status(404).send(error.message);
