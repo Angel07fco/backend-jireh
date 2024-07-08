@@ -1,7 +1,11 @@
 const express = require("express");
+const moment = require('moment');
 const router = express.Router();
 const { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitaByUserIdWearOs, getCitas, getValidationPet, deleteCita, updateCita } = require("./controller");
 const auth = require("../../middleware/auth");
+
+require('moment/locale/es');
+moment.locale('es');
 
 router.get("/validation/:fecha/:mascota", auth, async (req, res) => {
     const { fecha, mascota } = req.params;
@@ -118,6 +122,34 @@ router.put("/actualizar/:citaId", auth, async (req, res) => {
     try {
         const updatedCita = await updateCita(citaId, updateData);
         res.status(200).json({ mensaje: updatedCita });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+
+
+// Funciones para Alexa
+
+// Obtener próxima cita o la cita más próxima
+router.get("/alexa/:usuario", async (req, res) => {
+    const { usuario } = req.params;
+    try {
+        const citas = await getCitaByUserId(usuario);
+        if (!citas.length) {
+            return res.status(404).send("No se encontraron citas para este usuario.");
+        }
+
+        const citasOrdenadas = citas.sort((a, b) => moment(a.fecha + ' ' + a.hora, 'DD-MM-YYYY HH:mm').unix() - moment(b.fecha + ' ' + b.hora, 'DD-MM-YYYY HH:mm').unix());
+        const citaMasProxima = citasOrdenadas[0];
+
+        const fechaFormateada = moment(citaMasProxima.fecha, 'DD-MM-YYYY').format('D [de] MMMM');
+        const horaFormateada = moment(citaMasProxima.hora, 'HH:mm').format('h [de la] A').replace('AM', 'mañana').replace('PM', 'tarde');
+
+        res.status(200).json({
+            fecha: fechaFormateada,
+            hora: horaFormateada
+        });
     } catch (error) {
         res.status(400).send(error.message);
     }
