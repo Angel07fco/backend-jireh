@@ -1,7 +1,7 @@
 const express = require("express");
 const moment = require('moment');
 const router = express.Router();
-const { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitaByUserIdWearOs, getCitas, getValidationPet, deleteCita, updateCita } = require("./controller");
+const { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitaByUserIdFechaHora, getCitaByUserIdWearOs, getCitas, getValidationPet, deleteCita, updateCita } = require("./controller");
 const auth = require("../../middleware/auth");
 
 require('moment/locale/es');
@@ -149,6 +149,32 @@ router.get("/alexa/:usuario", async (req, res) => {
         res.status(200).json({
             fecha: fechaFormateada,
             hora: horaFormateada
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+// Obtener informacion de una cita proporcionando id del usuario, fecha y hora
+router.get("/alexa/info/:usuario/:fecha/:hora", async (req, res) => {
+    const { usuario, fecha, hora } = req.params;
+    try {
+        const citaInfo = await getCitaByUserIdFechaHora(usuario, fecha, hora);
+        if (citaInfo.length) {
+            return res.status(404).send("No se encontró una cita para esa fecha y hora.");
+        }
+
+        res.status(200).json({
+            nameMascota: citaInfo.mascota.name,
+            imgMascota: citaInfo.mascota.img,
+            nameServicio: citaInfo.servicio.name,
+            iconoServicio: citaInfo.servicio.icono,
+            imgServicio: citaInfo.servicio.img,
+            nameMedico: citaInfo.medico.nombre,
+            imgMedico: citaInfo.medico.img,
+            fecha: citaInfo.fecha,
+            hora: citaInfo.hora,
+            comentarios: citaInfo.comentarios
         });
     } catch (error) {
         res.status(400).send(error.message);
