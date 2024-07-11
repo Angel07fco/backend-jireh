@@ -164,6 +164,9 @@ router.get("/alexa/info/:usuario/:fecha/:hora", async (req, res) => {
             return res.status(404).send("No se encontró una cita para esa fecha y hora.");
         }
 
+        const fechaFormateada = moment(citaInfo.fecha, 'DD-MM-YYYY').format('D [de] MMMM');
+        const horaFormateada = moment(citaInfo.hora, 'HH:mm').format('h [de la] A').replace('AM', 'mañana').replace('PM', 'tarde');
+
         res.status(200).json({
             nameMascota: citaInfo.mascota.name,
             imgMascota: citaInfo.mascota.img,
@@ -172,8 +175,8 @@ router.get("/alexa/info/:usuario/:fecha/:hora", async (req, res) => {
             imgServicio: citaInfo.servicio.img,
             nameMedico: citaInfo.medico.nombre,
             imgMedico: citaInfo.medico.img,
-            fecha: citaInfo.fecha,
-            hora: citaInfo.hora,
+            fecha: fechaFormateada,
+            hora: horaFormateada,
             comentarios: citaInfo.comentarios
         });
     } catch (error) {
