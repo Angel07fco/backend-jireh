@@ -184,4 +184,33 @@ router.get("/alexa/info/:usuario/:fecha/:hora", async (req, res) => {
     }
 });
 
+router.delete("/alexa/cancelar-cita/:usuario/:fecha/:hora", async (req, res) => {
+    const { usuario, fecha, hora } = req.params;
+    try {
+        const citaInfo = await getCitaByUserIdFechaHora(usuario, fecha, hora);
+        if (citaInfo.length) {
+            return res.status(404).send("No se encontró una cita para esa fecha y hora.");
+        }
+
+        const fechaFormateada = moment(citaInfo.fecha, 'DD-MM-YYYY').format('D [de] MMMM');
+        const horaFormateada = moment(citaInfo.hora, 'HH:mm').format('h [de la] A').replace('AM', 'mañana').replace('PM', 'tarde');
+
+        const estadoCita = await deleteCita(citaInfo._id);
+        res.status(200).json({
+            nameMascota: citaInfo.mascota.name,
+            imgMascota: citaInfo.mascota.img,
+            nameServicio: citaInfo.servicio.name,
+            iconoServicio: citaInfo.servicio.icono,
+            imgServicio: citaInfo.servicio.img,
+            nameMedico: citaInfo.medico.nombre,
+            imgMedico: citaInfo.medico.img,
+            fecha: fechaFormateada,
+            hora: horaFormateada,
+            mensaje: estadoCita
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
 module.exports = router;
