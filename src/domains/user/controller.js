@@ -52,7 +52,6 @@ const authenticateUser = async (data) => {
 
         const tokenData = { userId: fetchedUser._id, email };
         const token = await createToken(tokenData);
-        const tokenP = await createTokenPassword(tokenData);
 
         await createdLog({ usuario: fetchedUser._id, ip, navegador, tipo: "1", accion, descripcion: "Hubo un inicio de sesión correctamente" });
 
@@ -62,7 +61,6 @@ const authenticateUser = async (data) => {
             isLogginIntented: 0,
             isLogginDate: moment().format('DD MM YYYY, hh:mm:ss a'),
             token: token,
-            tokenPassword: tokenP,
             expiratedTokenDate: moment(fecha).format('DD MM YYYY, hh:mm:ss a')
         });
 
@@ -153,9 +151,28 @@ const getUserById = async (token) => {
     }
 };
 
-const getUserByAccesoWearOs = async (accesoWearOs) => {
+const generateTokenAccess = async (token) => {
     try {
-        const user = await User.findOne({ accesoWearOs });
+        const user = await getUserById(token);
+        if (!user) {
+            throw new Error("Usuario no encontrado");
+        }
+
+        // Generar el token
+        const tokenP = await createTokenPassword();
+
+        // Actualizar el campo tokenPassword en la base de datos
+        await User.findByIdAndUpdate(user._id, { tokenPassword: tokenP });
+
+        return tokenP;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+const getUserByAccesoTokenSession = async (tokenPassword) => {
+    try {
+        const user = await User.findOne({ tokenPassword });
         if (!user) {
             throw new Error("Usuario no encontrado");
         }
@@ -182,4 +199,4 @@ const getUsers = async (rol) => {
 }
 
 
-module.exports = { createdUser, authenticateUser, logoutUserSession, getUserById, updateUser, getUsers, getUserByAccesoWearOs };
+module.exports = { createdUser, authenticateUser, logoutUserSession, getUserById, updateUser, getUsers, generateTokenAccess, getUserByAccesoTokenSession };

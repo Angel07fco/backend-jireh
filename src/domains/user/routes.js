@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createdUser, authenticateUser, logoutUserSession, getUserById, getUserByAccesoWearOs, updateUser, getUsers } = require("./controller");
+const { createdUser, authenticateUser, logoutUserSession, getUserById, generateTokenAccess, getUserByAccesoTokenSession, updateUser, getUsers } = require("./controller");
 const auth = require("./../../middleware/auth");
 const { sendVerificationOTPEmail } = require("./../email_verification/controller");
 const axios = require('axios');
@@ -23,11 +23,24 @@ router.get("/obtenerusuario/:token", async (req, res) => {
     }
 });
 
-// Obtener un usuario por accesoWearOs
-router.get("/obtenerusuariowearos/:accesoWearOs", async (req, res) => {
-    const { accesoWearOs } = req.params;
+// Obtener token de acceso para accesoWearOs y alexa
+router.get("/obtenertokensession/:token", async (req, res) => {
+    const { token } = req.params;
     try {
-        const userById = await getUserByAccesoWearOs(accesoWearOs);
+        const userByTokenSession = await generateTokenAccess(token);
+        res.status(200).json({
+            tokenPassword: userByTokenSession
+        });
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
+// Obtener un usuario por accesoWearOs y alexa
+router.get("/obtener-usuario-token-session/:tokenPassword", async (req, res) => {
+    const { tokenPassword } = req.params;
+    try {
+        const userById = await getUserByAccesoTokenSession(tokenPassword);
         res.status(200).json(userById);
     } catch (error) {
         res.status(404).send(error.message);
