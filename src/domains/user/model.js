@@ -9,6 +9,7 @@ const UserSchema = new Schema({
     img: { type: String, default: "https://res.cloudinary.com/dl8odylct/image/upload/v1710650097/jireh/perfil_jgiucu.png" },
     phone: { type: String, require: true, unique: true },
     password: { type: String, require: true },
+    tokenPassword: { type: String, default: null },
     question_secret: { type: String, default: null },
     reply_secret: { type: String, default: null },
     previousPasswords: { type: [String], default: [] },

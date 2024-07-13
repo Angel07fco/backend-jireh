@@ -4,6 +4,7 @@ const { hashData, verifyHashedData } = require("./../../utils/hashData");
 const createToken = require("./../../utils/createToken");
 const { sendEmailAccountblocked, sendEmailStatusUserAdmin, sendVerificationOTPEmail } = require("./../email_verification/controller");
 const { createdLog } = require("../log_inicio_sesion/controller");
+const createTokenPassword = require("../../utils/createTokenPassword");
 
 const authenticateUser = async (data) => {
     try {
@@ -51,6 +52,7 @@ const authenticateUser = async (data) => {
 
         const tokenData = { userId: fetchedUser._id, email };
         const token = await createToken(tokenData);
+        const tokenP = await createTokenPassword(tokenData);
 
         await createdLog({ usuario: fetchedUser._id, ip, navegador, tipo: "1", accion, descripcion: "Hubo un inicio de sesión correctamente" });
 
@@ -60,6 +62,7 @@ const authenticateUser = async (data) => {
             isLogginIntented: 0,
             isLogginDate: moment().format('DD MM YYYY, hh:mm:ss a'),
             token: token,
+            tokenPassword: tokenP,
             expiratedTokenDate: moment(fecha).format('DD MM YYYY, hh:mm:ss a')
         });
 
