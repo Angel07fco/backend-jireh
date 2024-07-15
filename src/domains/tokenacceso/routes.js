@@ -12,7 +12,7 @@ router.get("/verify/:token/:tToken", async (req, res) => {
             user: validTokenAcceso.user
         });
     } catch (error) {
-        res.status(400).json({ "errorM": error.message });
+        res.status(400).send(error.message);
     }
 });
 
