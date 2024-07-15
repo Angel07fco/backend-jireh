@@ -32,8 +32,6 @@ const verifyTokenAcceso = async ({ token, tToken }) => {
 
         await deleteTokenAcceso(token);
 
-        const infoUser = await getUserById(tokenUsuario);
-
         return msg;
     } catch (error) {
         msg = error.message;
