@@ -3,6 +3,7 @@ const moment = require('moment');
 const router = express.Router();
 const { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitaByUserIdFechaHora, getCitaByUserIdWearOs, getCitas, getValidationPet, deleteCita, updateCita } = require("./controller");
 const auth = require("../../middleware/auth");
+const { verifyTokenAcceso } = require("../tokenacceso/controller");
 
 require('moment/locale/es');
 moment.locale('es');
@@ -130,6 +131,26 @@ router.put("/actualizar/:citaId", auth, async (req, res) => {
 
 
 // Funciones para Alexa
+router.get("/acceso-wearos-alexa/:token/:tToken", async (req, res) => {
+    try {
+        let { token, tToken } = req.params;
+
+        const validTokenAcceso = await verifyTokenAcceso({ token, tToken });
+        if (validTokenAcceso.msg) {
+            return res.status(400).json({
+                msgError: validTokenAcceso.msg
+            });
+        }
+
+        return res.status(200).json({
+            idUsuario: validTokenAcceso.infoUser._id,
+            user: validTokenAcceso.infoUser.user,
+            email: validTokenAcceso.infoUser.email
+        });
+    } catch (error) {
+        res.status(400).json(error.message);
+    }
+});
 
 // Obtener próxima cita o la cita más próxima
 router.get("/alexa/:usuario", async (req, res) => {
