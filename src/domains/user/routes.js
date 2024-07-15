@@ -53,6 +53,36 @@ router.post("/", async (req, res) => {
     }
 });
 
+// Signin wear os y alexa
+router.post("/dispositivos", async (req, res) => {
+    try {
+        let { email, password } = req.body;
+        email = email.trim();
+        password = password.trim();
+
+        if (!(email && password)) {
+            throw Error("Credenciales ingresadas vacías!");
+        }
+
+        const ipResponse = await axios.get('https://api.ipify.org/');
+        const ip = ipResponse.data.trim();
+
+        const navegador = req.headers['user-agent'];
+
+        const authenticatedUser = await authenticateUser({ email, password, ip, navegador });
+
+        res.status(200).json({
+            id: authenticatedUser._id,
+            rol: authenticatedUser.rol,
+            email: authenticatedUser.email,
+            token: authenticatedUser.token,
+            msj: "Has iniciado sesión correctamente."
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
 // Crear una cuenta
 router.post("/crearcuenta", async(req, res) => {
     let { user, email, phone, password } = req.body;
