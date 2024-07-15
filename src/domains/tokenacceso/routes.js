@@ -3,16 +3,16 @@ const router = express.Router();
 const { generateTokenAcceso, verifyTokenAcceso } = require("./controller");
 
 router.get("/verify/:token/:tToken", async (req, res) => {
+    let { token, tToken } = req.params;
     try {
-        let { token, tToken } = req.params;
-
         const validTokenAcceso = await verifyTokenAcceso({ token, tToken });
-
-        return res.status(200).json({
-            validTokenAcceso
+        res.status(200).json({
+            id: validTokenAcceso._id,
+            email: validTokenAcceso.email,
+            user: validTokenAcceso.user
         });
     } catch (error) {
-        res.status(400).json(error.message);
+        res.status(400).send(error.message);
     }
 });
 

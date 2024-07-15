@@ -3,11 +3,9 @@ const createTokenPassword = require("../../utils/createTokenPassword");
 const { getUserById } = require("../user/controller");
 
 const verifyTokenAcceso = async ({ token, tToken }) => {
-    let msg = "Inicio de sesion con exito";
-
     try {
         if (!token) {
-            msg = "Proporcione su Token de Acceso";
+            throw new Error("Proporcione su Token de Acceso.");
         }
 
         // Buscamos el registro de ese token
@@ -15,27 +13,28 @@ const verifyTokenAcceso = async ({ token, tToken }) => {
 
         // Verificamos que el token existe
         if (!matchedTokenAccesoRecord) {
-            msg = "No se han encontrado registros de ese Token de Acceso.";
+            throw new Error("No se han encontrado registros de ese Token de Acceso.");
         }
 
         // Si existe obtenemos el tipo de token y el tiempo de expiración
         const { tipoToken, expiresAt, tokenUsuario } = matchedTokenAccesoRecord;
 
         if (tipoToken !== tToken) {
-            msg = "El token proporcionado no es válido para este dispositivo.";
+            throw new Error("El token proporcionado no es válido para este dispositivo.");
         }
 
         if (expiresAt < Date.now()) {
             await TokenAcceso.deleteOne({ token });
-            msg = "El token ha caducado. Solicite uno nuevo.";
+            throw new Error("El token ha caducado. Solicite uno nuevo.");
         }
 
         await deleteTokenAcceso(token);
 
-        return msg;
+        const infoUser = await getUserById(tokenUsuario);
+
+        return infoUser;
     } catch (error) {
-        msg = error.message;
-        return { msg, infoUser };
+        throw new Error(error.message);
     }
 };
 
