@@ -7,16 +7,9 @@ router.get("/verify/:token/:tToken", async (req, res) => {
         let { token, tToken } = req.params;
 
         const validTokenAcceso = await verifyTokenAcceso({ token, tToken });
-        if (validTokenAcceso.msg) {
-            return res.status(400).json({
-                msgError: validTokenAcceso.msg
-            });
-        }
 
         return res.status(200).json({
-            idUsuario: validTokenAcceso.infoUser._id,
-            user: validTokenAcceso.infoUser.user,
-            email: validTokenAcceso.infoUser.email
+            validTokenAcceso
         });
     } catch (error) {
         res.status(400).json(error.message);
