@@ -12,9 +12,11 @@ const veterinariosRoutes = require("./../domains/veterinarios");
 const logSession = require("./../domains/log_inicio_sesion");
 const horariosRoutes = require("./../domains/horarios");
 const preguntasFrecuentes = require("./../domains/faq");
+const TokenAccesoRoutes = require("../domains/tokenacceso");
 
 router.use("/user", userRoutes);
 router.use("/otp", OTPRoutes);
+router.use("/tokenacceso", TokenAccesoRoutes);
 router.use("/email_verification", EmailVerificationRoutes);
 router.use("/forgot_password", ForgotPasswordRoutes);
 

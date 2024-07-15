@@ -151,37 +151,6 @@ const getUserById = async (token) => {
     }
 };
 
-const generateTokenAccess = async (token) => {
-    try {
-        const user = await getUserById(token);
-        if (!user) {
-            throw new Error("Usuario no encontrado");
-        }
-
-        // Generar el token
-        const tokenP = await createTokenPassword();
-
-        // Actualizar el campo tokenPassword en la base de datos
-        await User.findByIdAndUpdate(user._id, { tokenPassword: tokenP });
-
-        return tokenP;
-    } catch (error) {
-        throw new Error(error.message);
-    }
-};
-
-const getUserByAccesoTokenSession = async (tokenPassword) => {
-    try {
-        const user = await User.findOne({ tokenPassword });
-        if (!user) {
-            throw new Error("Usuario no encontrado");
-        }
-        return user;
-    } catch (error) {
-        throw new Error(error.message);
-    }
-};
-
 const getUsers = async (rol) => {
     try {
         // Si se proporciona un rol, se filtran los usuarios por ese rol
@@ -199,4 +168,4 @@ const getUsers = async (rol) => {
 }
 
 
-module.exports = { createdUser, authenticateUser, logoutUserSession, getUserById, updateUser, getUsers, generateTokenAccess, getUserByAccesoTokenSession };
+module.exports = { createdUser, authenticateUser, logoutUserSession, getUserById, updateUser, getUsers };
