@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { generateTokenAcceso, verifyTokenAcceso } = require("./controller");
 
-router.post("/verify/:token/:tToken", async (req, res) => {
+router.get("/verify/:token/:tToken", async (req, res) => {
     try {
         let { token, tToken } = req.params;
 
