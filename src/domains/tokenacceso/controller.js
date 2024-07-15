@@ -3,41 +3,46 @@ const createTokenPassword = require("../../utils/createTokenPassword");
 const { getUserById } = require("../user/controller");
 
 const verifyTokenAcceso = async ({ token, tToken }) => {
+    let msg = "";
+    let infoUser = null;
+
     try {
-        if (!(token)) {
-            throw Error("Proporcione su Token de Acceso");
+        if (!token) {
+            msg = "Proporcione su Token de Acceso";
+            return { msg, infoUser };
         }
 
-        console.log("Tipo de token: " + tToken)
-
-        // buscamos el registro de ese token
+        // Buscamos el registro de ese token
         const matchedTokenAccesoRecord = await TokenAcceso.findOne({ token });
 
         // Verificamos que el token existe
         if (!matchedTokenAccesoRecord) {
-            throw Error("No se han encontrado registros de ese Token de Acceso.");
+            msg = "No se han encontrado registros de ese Token de Acceso.";
+            return { msg, infoUser };
         }
 
         // Si existe obtenemos el tipo de token y el tiempo de expiración
         const { tipoToken, expiresAt, tokenUsuario } = matchedTokenAccesoRecord;
-        console.log(tipoToken)
 
         if (tipoToken !== tToken) {
-            throw Error("El token proporcionado no es valido para este dispositivo.");
+            msg = "El token proporcionado no es válido para este dispositivo.";
+            return { msg, infoUser };
         }
 
         if (expiresAt < Date.now()) {
             await TokenAcceso.deleteOne({ token });
-            throw Error("El token ha caducado. Solicite uno nuevo.");
+            msg = "El token ha caducado. Solicite uno nuevo.";
+            return { msg, infoUser };
         }
 
         await deleteTokenAcceso(token);
 
-        const infoUser = await getUserById(tokenUsuario);
+        infoUser = await getUserById(tokenUsuario);
 
-        return infoUser;
+        return { msg, infoUser };
     } catch (error) {
-        throw error;
+        msg = error.message;
+        return { msg, infoUser };
     }
 };
 

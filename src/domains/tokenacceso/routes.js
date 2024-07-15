@@ -2,25 +2,31 @@ const express = require("express");
 const router = express.Router();
 const { generateTokenAcceso, verifyTokenAcceso } = require("./controller");
 
-router.post("/verify", async (req, res) => {
+router.post("/verify/:token/:tToken", async (req, res) => {
     try {
-        let { token, tToken } = req.body;
+        let { token, tToken } = req.params;
 
         const validTokenAcceso = await verifyTokenAcceso({ token, tToken });
-        res.status(200).json({
-            idUsuario: validTokenAcceso._id,
-            user: validTokenAcceso.user,
-            email: validTokenAcceso.email
+        if (validTokenAcceso.msg) {
+            return res.status(400).json({
+                msgError: validTokenAcceso.msg
+            });
+        }
+
+        return res.status(200).json({
+            idUsuario: validTokenAcceso.infoUser._id,
+            user: validTokenAcceso.infoUser.user,
+            email: validTokenAcceso.infoUser.email
         });
     } catch (error) {
-        res.status(400).send(error.message);
+        res.status(400).json(error.message);
     }
 });
 
 // request new verification otp
-router.post("/", async (req, res) => {
+router.post("/:tokenUsuario/:tipo", async (req, res) => {
     try {
-        const { tokenUsuario, tipo } = req.body;
+        const { tokenUsuario, tipo } = req.params;
 
         const cretedTokenAcceso = await generateTokenAcceso({
             tokenUsuario,
