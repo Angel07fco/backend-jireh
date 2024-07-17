@@ -1,6 +1,6 @@
 const TokenAcceso = require("./model");
-const createTokenPassword = require("../../utils/createTokenPassword");
 const { getUserById } = require("../user/controller");
+const generateOTP = require("../../utils/generateOTP");
 
 const verifyTokenAcceso = async ({ token, tToken }) => {
     try {
@@ -44,7 +44,7 @@ const generateTokenAcceso = async ({ tokenUsuario, tipo }) => {
         await TokenAcceso.deleteOne({ tokenUsuario });
 
         // Generando nuevo token
-        const generatedTokenAcceso = await createTokenPassword();
+        const generatedTokenAcceso = await generateOTP();
 
         // Guardar nuevo token
         const newTokenUsuario = new TokenAcceso({
