@@ -13,6 +13,8 @@ const logSession = require("./../domains/log_inicio_sesion");
 const horariosRoutes = require("./../domains/horarios");
 const preguntasFrecuentes = require("./../domains/faq");
 const TokenAccesoRoutes = require("../domains/tokenacceso");
+const Galeria = require("../domains/galeria");
+const Blog = require("../domains/blog");
 
 router.use("/user", userRoutes);
 router.use("/otp", OTPRoutes);
@@ -26,6 +28,8 @@ router.use("/cita", citasRoutes);
 router.use("/veterinario", veterinariosRoutes);
 router.use("/horario", horariosRoutes);
 router.use("/preguntas-frecuentes", preguntasFrecuentes);
+router.use("/galeria", Galeria);
+router.use("/blog", Blog);
 
 router.use("/log_inicio_sesion", logSession);
 
