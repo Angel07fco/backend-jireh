@@ -14,7 +14,10 @@ router.post("/", async (req, res) => {
             categories,
             imageUrl
         });
-        res.status(200).json(createBlog);
+        res.status(200).json({
+            id: createBlog._id,
+            msj: "Se ha agregado correctamente el Blog.",
+        });
     } catch (error) {
         res.status(400).send(error.message);
     }
@@ -25,7 +28,10 @@ router.put("/:id", async (req, res) => {
     try {
         const { id } = req.params;
         const upBlog = await updateBlog(id, req.body);
-        res.status(200).json(upBlog);
+        res.status(200).json({
+            id: upBlog._id,
+            msj: "Se ha actualizado correctamente el Blog.",
+        });
     } catch (error) {
         res.status(400).send(error.message);
     }
@@ -36,7 +42,10 @@ router.delete("/:id", async (req, res) => {
     try {
         const { id } = req.params;
         const delBlog = await deleteBlog(id);
-        res.status(200).json(delBlog);
+        res.status(200).json({
+            id: delBlog._id,
+            msj: "Se ha eliminado correctamente el Blog.",
+        });
     } catch (error) {
         res.status(400).send(error.message);
     }
