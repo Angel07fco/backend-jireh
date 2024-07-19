@@ -28,4 +28,30 @@ const getPreguntasFrecuentes = async () => {
     }
 };
 
-module.exports = { createdFaq, getPreguntasFrecuentes };
+// Editar una imagen en la galería
+const updateFaq = async (id, data) => {
+    try {
+        const updateBlog = await Faq.findByIdAndUpdate(id, data, { new: true });
+        if (!updateBlog) {
+            throw Error("Faq no encontrado");
+        }
+        return updateBlog;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Eliminar una imagen en la galería
+const deleteFaq = async (id) => {
+    try {
+        const deleteFaq = await Faq.findByIdAndDelete(id);
+        if (!deleteFaq) {
+            throw Error("Faq no encontrado");
+        }
+        return deleteFaq;
+    } catch (error) {
+        throw error;
+    }
+};
+
+module.exports = { createdFaq, getPreguntasFrecuentes, updateFaq, deleteFaq };
