@@ -47,6 +47,16 @@ const deleteBlog = async (id) => {
     }
 };
 
+// Filtrar todos los blogs
+const obtenerBlogs = async () => {
+    try {
+        const blogs = await Blog.find();
+        return blogs;
+    } catch (error) {
+        throw error;
+    }
+};
+
 // Filtrar imágenes por categoría
 const filterByCategory = async (categories) => {
     try {
@@ -57,4 +67,4 @@ const filterByCategory = async (categories) => {
     }
 };
 
-module.exports = { createNewBlog, updateBlog, deleteBlog, filterByCategory };
+module.exports = { createNewBlog, updateBlog, deleteBlog, obtenerBlogs, filterByCategory };

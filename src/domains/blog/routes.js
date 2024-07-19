@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createNewBlog, updateBlog, deleteBlog, filterByCategory } = require("./controller");
+const { createNewBlog, updateBlog, deleteBlog, obtenerBlogs, filterByCategory } = require("./controller");
 
 
 // agregar blog
@@ -42,6 +42,15 @@ router.delete("/:id", async (req, res) => {
     }
 });
 
+// Filtrar blogs
+router.get("/", async (req, res) => {
+    try {
+        const blogs = await obtenerBlogs();
+        res.status(200).json(blogs);
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
 
 // Filtrar blogs por categoría
 router.get("/categoria/:categories", async (req, res) => {

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createNewGaleria, updateGaleria, deleteGaleria, filterByClasificacion, filterByCategory } = require("./controller");
+const { createNewGaleria, updateGaleria, deleteGaleria, obtenerGalerias, filterByClasificacion, filterByCategory } = require("./controller");
 
 // agregar imagen a galeria
 router.post("/", async (req, res) => {
@@ -37,6 +37,16 @@ router.delete("/:id", async (req, res) => {
         const { id } = req.params;
         const deletedGaleria = await deleteGaleria(id);
         res.status(200).json(deletedGaleria);
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+// Filtrar galerias
+router.get("/", async (req, res) => {
+    try {
+        const galerias = await obtenerGalerias();
+        res.status(200).json(galerias);
     } catch (error) {
         res.status(400).send(error.message);
     }

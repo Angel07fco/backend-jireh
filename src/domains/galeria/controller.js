@@ -48,6 +48,16 @@ const deleteGaleria = async (id) => {
     }
 };
 
+// Filtrar todas galerias
+const obtenerGalerias = async () => {
+    try {
+        const galerias = await Gallery.find();
+        return galerias;
+    } catch (error) {
+        throw error;
+    }
+};
+
 // Filtrar imágenes por clasificación
 const filterByClasificacion = async (clasificacion) => {
     try {
@@ -68,4 +78,4 @@ const filterByCategory = async (category) => {
     }
 };
 
-module.exports = { createNewGaleria, updateGaleria, deleteGaleria, filterByClasificacion, filterByCategory };
+module.exports = { createNewGaleria, updateGaleria, deleteGaleria, obtenerGalerias, filterByClasificacion, filterByCategory };
