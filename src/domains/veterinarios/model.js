@@ -16,7 +16,8 @@ const MedicoSchema = new Schema({
     },
     phone: { type: String, require: true, unique: true },
     email: { type: String, require: true },
-    descripcion: { type: String, default: null }
+    descripcion: { type: String, default: null },
+    createdMedico: { type: Date, default: Date.now()}
 });
 
 const Veterinario = mongoose.model("Veterinario", MedicoSchema);
