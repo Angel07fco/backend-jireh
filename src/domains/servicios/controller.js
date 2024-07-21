@@ -23,13 +23,13 @@ const getServiceById = async (serviceId) => {
 
 const createNewService = async (data) => {
     try {
-        const { name, img, description, duracion } = data;
+        const { name, img, description, icono } = data;
 
         const newService = new Service({
             name,
             img,
             description,
-            duracion
+            icono
         });
         const createdService = await newService.save();
         return createdService;
