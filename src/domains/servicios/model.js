@@ -8,7 +8,7 @@ const ServiceSchema = new Schema({
     rating: { type: Number, default: 0, min: 0, max: 5 },
     description: { type: String, required: true },
     objective: { type: String },
-    price: { type: String, required: true },
+    price: { type: String, default: "100" },
     duration: { type: Number },
     reactions: { type: String },
     frequency: { type: String },
