@@ -10,7 +10,9 @@ const CitaSchema = new Schema({
     hora: { type: String, require: true },
     comentarios: { type: String },
     state: { type: Boolean, default: true },
-    citaCreated : { type: String }
+    citaCreated : { type: String },
+    estado: { type: String, default: "proxima" },
+    opinionUsuario: { type: Boolean, default: false }
 });
 
 const Cita = mongoose.model("Cita", CitaSchema);

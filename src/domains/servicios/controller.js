@@ -38,4 +38,58 @@ const createNewService = async (data) => {
     }
 };
 
-module.exports = { createNewService, getAllServices, getServiceById };
+// Editar una imagen en la galería
+const updateServicio = async (id, data) => {
+    try {
+        const updateServicio = await Service.findByIdAndUpdate(id, data, { new: true });
+        if (!updateServicio) {
+            throw Error("Servicio no encontrado");
+        }
+        return updateServicio;
+    } catch (error) {
+        throw error;
+    }
+};
+
+const deshabilitarService = async (data) => {
+    try {
+        const { id } = data;
+
+        const service = await Service.findByIdAndUpdate(
+            id,
+            { estado: 'indisponible' },
+            { new: true }
+        );
+
+        if (!service) {
+            throw new Error("Servicio no encontrado");
+        }
+
+        return service;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+const habilitarService = async (data) => {
+    try {
+        const { id } = data;
+
+        const service = await Service.findByIdAndUpdate(
+            id,
+            { estado: 'disponible' },
+            { new: true }
+        );
+
+        if (!service) {
+            throw new Error("Servicio no encontrado");
+        }
+
+        return service;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+
+module.exports = { createNewService, getAllServices, getServiceById, updateServicio, deshabilitarService, habilitarService };

@@ -66,4 +66,44 @@ const updatePet = async (petId, updateData) => {
     }
 };
 
-module.exports = { createNewPet, getPetByUserId, getPets, updatePet };
+const deshabilitarMascota = async (data) => {
+    try {
+        const { id } = data;
+
+        const service = await Pet.findByIdAndUpdate(
+            id,
+            { estado: 'indisponible' },
+            { new: true }
+        );
+
+        if (!service) {
+            throw new Error("Mascota no encontrada");
+        }
+
+        return service;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+const habilitarMascota = async (data) => {
+    try {
+        const { id } = data;
+
+        const service = await Pet.findByIdAndUpdate(
+            id,
+            { estado: 'disponible' },
+            { new: true }
+        );
+
+        if (!service) {
+            throw new Error("Mascota no encontrada");
+        }
+
+        return service;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+module.exports = { createNewPet, getPetByUserId, getPets, updatePet, deshabilitarMascota, habilitarMascota };

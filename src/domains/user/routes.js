@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createdUser, authenticateUser, logoutUserSession, getUserById, updateUser, getUsers } = require("./controller");
+const { createdUser, authenticateUser, logoutUserSession, getUserById, updateUser, getUsers, deshabilitarUsuario, habilitarUsuario } = require("./controller");
 const auth = require("./../../middleware/auth");
 const { sendVerificationOTPEmail } = require("./../email_verification/controller");
 const axios = require('axios');
@@ -157,7 +157,7 @@ router.put("/updateuser/:id", async (req, res) => {
 // Rutas para admins
 
 // Obtener usuarios
-router.get("/admingetusers/:rol", auth, async (req, res) => {
+router.get("/admingetusers/:rol", async (req, res) => {
     const { rol } = req.params;
     try {
         const users = await getUsers(rol);
@@ -202,7 +202,7 @@ router.post("/adminnewuser", auth, async(req, res) => {
 });
 
 // Actualizar un usuario
-router.put("/adminupdateuser/:id", auth, async (req, res) => {
+router.put("/adminupdateuser/:id", async (req, res) => {
     const userId = req.params.id;
     const updateData = req.body;
     const ip = req.ip;
@@ -215,6 +215,33 @@ router.put("/adminupdateuser/:id", auth, async (req, res) => {
             msj: "Se ha actualizado el campo correctamente",
             createdAt: updatedUser.createdAt,
             updatedAt: updatedUser.updatedAt
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+router.put("/deshabilitar/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const usuarioDes = await deshabilitarUsuario({ id });
+        console.log(usuarioDes);
+        res.status(200).json({
+            id: usuarioDes._id,
+            msj: `Se ha deshabilitado el servicio ${usuarioDes.user} correctamente.`
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+router.put("/habilitar/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const usuarioHabilitado = await habilitarUsuario({ id });
+        res.status(200).json({
+            id: usuarioHabilitado._id,
+            msj: `Se ha habilitado el servicio ${usuarioHabilitado.user} correctamente.`
         });
     } catch (error) {
         res.status(400).send(error.message);

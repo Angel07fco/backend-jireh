@@ -167,5 +167,44 @@ const getUsers = async (rol) => {
     }
 }
 
+const deshabilitarUsuario = async (data) => {
+    try {
+        const { id } = data;
+        const usuarioDeshabilitado = await User.findByIdAndUpdate(
+            id,
+            { userStatus: 'desactivo' },
+            { new: true, select: '_id user email phone userStatus' }
+        );
 
-module.exports = { createdUser, authenticateUser, logoutUserSession, getUserById, updateUser, getUsers };
+        if (!usuarioDeshabilitado) {
+            throw new Error("Usuario no encontrado");
+        }
+
+        return usuarioDeshabilitado;
+
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+const habilitarUsuario = async (data) => {
+    try {
+        const { id } = data;
+        const usuarioHabilitado = await User.findByIdAndUpdate(
+            id,
+            { userStatus: 'activo' },
+            { new: true, select: '_id user email phone userStatus' }
+        );
+
+        if (!usuarioHabilitado) {
+            throw new Error("Usuario no encontrado");
+        }
+
+        return usuarioHabilitado;
+
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+module.exports = { createdUser, authenticateUser, logoutUserSession, getUserById, updateUser, getUsers, deshabilitarUsuario, habilitarUsuario };

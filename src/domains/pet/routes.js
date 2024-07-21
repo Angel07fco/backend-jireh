@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createNewPet, getPetByUserId, getPets, updatePet } = require("../pet/controller");
+const { createNewPet, getPetByUserId, getPets, updatePet, deshabilitarMascota, habilitarMascota } = require("../pet/controller");
 const auth = require("../../middleware/auth");
 
 router.post("/newpet", auth, async (req, res)  => {
@@ -44,7 +44,7 @@ router.post("/newpet", auth, async (req, res)  => {
     }
 });
 
-router.get("/", auth, async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const pets = await getPets();
         const petReducido = pets.map(pet => ({
@@ -58,7 +58,8 @@ router.get("/", auth, async (req, res) => {
             genero: pet.genero,
             tamano: pet.tamano,
             age: pet.age,
-            peso: pet.peso
+            peso: pet.peso,
+            estado: pet.estado
         }));
         res.status(200).json(petReducido);
     } catch (error) {
@@ -88,6 +89,34 @@ router.put("/actualizar/:petId", auth, async (req, res) => {
             msj: "Se ha actualizado correctamente",
             createdAt: updatePett.createdAt,
             updatedAt: updatePett.updatedAt
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+router.put("/deshabilitar/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const mascotaDes = await deshabilitarMascota({ id });
+        res.status(200).json({
+            id: mascotaDes._id,
+            name: mascotaDes.name,
+            msj: `Se ha deshabilitado la mascota ${mascotaDes.name} correctamente.`
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+router.put("/habilitar/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const mascotaDes = await habilitarMascota({ id });
+        res.status(200).json({
+            id: mascotaDes._id,
+            name: mascotaDes.name,
+            msj: `Se ha habilitado la mascota ${mascotaDes.name} correctamente.`
         });
     } catch (error) {
         res.status(400).send(error.message);

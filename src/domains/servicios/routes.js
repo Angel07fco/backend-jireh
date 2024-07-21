@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getAllServices, getServiceById, createNewService } = require("./controller");
+const { getAllServices, getServiceById, createNewService, deshabilitarService, habilitarService, updateServicio } = require("./controller");
 const verifyToken = require("../../middleware/auth");
 
 // Ruta para obtener todos los servicios
@@ -22,7 +22,6 @@ router.get("/:id", async (req, res) => {
         res.status(404).send(error.message);
     }
 });
-
 
 // Rutas para admins
 
@@ -58,5 +57,46 @@ router.post("/newservice", verifyToken, async (req, res) => {
     }
 });
 
+// Editar servicio
+router.put("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const upServicio = await updateServicio(id, req.body);
+        res.status(200).json({
+            id: upServicio._id,
+            msj: `Se ha actualizado correctamente el servicio ${upServicio.name}.`,
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+router.put("/deshabilitar/:id", verifyToken, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const serviceDes = await deshabilitarService({ id });
+        res.status(200).json({
+            id: serviceDes._id,
+            name: serviceDes.name,
+            msj: `Se ha deshabilitado el servicio ${serviceDes.name} correctamente.`
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+router.put("/habilitar/:id", verifyToken, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const serviceDes = await habilitarService({ id });
+        res.status(200).json({
+            id: serviceDes._id,
+            name: serviceDes.name,
+            msj: `Se ha habilitado el servicio ${serviceDes.name} correctamente.`
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
 
 module.exports = router;

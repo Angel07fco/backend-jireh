@@ -14,7 +14,7 @@ const PetSchema = new Schema({
     petCreated : { type: String },
     estado: { type: String, default: "activo" },
     userId: { type: Schema.Types.ObjectId, ref: 'User' },
-    estado: { type: String, default: "activo" }
+    estado: { type: String, default: "disponible" }
 });
 
 const Pet = mongoose.model("Pet", PetSchema);

@@ -22,6 +22,10 @@ const HorarioSchema = new mongoose.Schema({
     horariosDisponibles: {
         type: [String],
         default: []
+    },
+    estado: {
+        type: String,
+        default: "disponible"
     }
 });
 

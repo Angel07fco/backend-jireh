@@ -12,7 +12,9 @@ const ServiceSchema = new Schema({
     duration: { type: Number },
     reactions: { type: String },
     frequency: { type: String },
-    duracion: { type: Number }
+    duracion: { type: Number },
+    estado: { type: String, default: "disponible" },
+    dateCreated: { type: String, default: null },
 });
 
 const Service = mongoose.model("Service", ServiceSchema);
