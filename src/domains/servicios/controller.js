@@ -1,5 +1,5 @@
 const Service = require("./model");
-const Cita = require("../citas/model")
+const Cita = require("../citas/model");
 
 const getAllServices = async () => {
     try {

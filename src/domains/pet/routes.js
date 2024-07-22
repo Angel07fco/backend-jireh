@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createNewPet, getPetByUserId, getPets, updatePet, deshabilitarMascota, habilitarMascota } = require("../pet/controller");
+const { createNewPet, getPetByUserId, getPets, updatePet, deshabilitarMascota, habilitarMascota, deleteMascota } = require("../pet/controller");
 const auth = require("../../middleware/auth");
 
 router.post("/newpet", auth, async (req, res)  => {
@@ -89,6 +89,20 @@ router.put("/actualizar/:petId", auth, async (req, res) => {
             msj: "Se ha actualizado correctamente",
             createdAt: updatePett.createdAt,
             updatedAt: updatePett.updatedAt
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+// Eliminar mascota
+router.delete("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const delMascota = await deleteMascota(id);
+        res.status(200).json({
+            id: delMascota._id,
+            msj: `Se ha eliminado correctamente tu mascota ${delMascota.name}.`,
         });
     } catch (error) {
         res.status(400).send(error.message);

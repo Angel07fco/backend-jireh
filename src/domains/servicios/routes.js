@@ -69,7 +69,7 @@ router.put("/:id", async (req, res) => {
     }
 });
 
-// Eliminar blog
+// Eliminar servicio
 router.delete("/:id", async (req, res) => {
     try {
         const { id } = req.params;

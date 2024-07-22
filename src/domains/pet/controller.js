@@ -1,5 +1,6 @@
 const moment = require("moment");
 const Pet = require("../pet/model");
+const Cita = require("../citas/model");
 
 const createNewPet = async (data) => {
     try {
@@ -36,7 +37,7 @@ const getPets = async () => {
 
 const getPetByUserId = async (userId) => {
     try {
-        const pet = await Pet.find({ userId });
+        const pet = await Pet.find({ userId, estado: "disponible" });
         if (!pet) {
             throw new Error("Usuario no encontrado");
         }
@@ -63,6 +64,25 @@ const updatePet = async (petId, updateData) => {
         return updatedPet;
     } catch (error) {
         throw new Error(error.message);
+    }
+};
+
+// Eliminar un servicio
+const deleteMascota = async (id) => {
+    try {
+        // Verificar si existen citas asociadas con el servicio
+        const existingCitas = await Cita.find({ mascota: id });
+        if (existingCitas.length > 0) {
+            throw new Error("No se puede eliminar porque hay citas agendadas con esta mascota.");
+        }
+
+        const deleteMas = await Pet.findByIdAndDelete(id);
+        if (!deleteMas) {
+            throw new Error("Mascota no encontrado");
+        }
+        return deleteSer;
+    } catch (error) {
+        throw error;
     }
 };
 
@@ -106,4 +126,4 @@ const habilitarMascota = async (data) => {
     }
 };
 
-module.exports = { createNewPet, getPetByUserId, getPets, updatePet, deshabilitarMascota, habilitarMascota };
+module.exports = { createNewPet, getPetByUserId, getPets, updatePet, deshabilitarMascota, habilitarMascota, deleteMascota };
