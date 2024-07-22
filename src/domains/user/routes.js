@@ -135,14 +135,14 @@ router.put("/updateuser/:id", async (req, res) => {
     try {
         // Obtener la dirección IP pública
         const ipResponse = await axios.get('https://api.ipify.org/');
-        const ip = ipResponse.data.trim(); // Eliminar cualquier espacio en blanco alrededor de la dirección IP
+        const ip = ipResponse.data.trim();
 
         const navegador = req.headers['user-agent'];
 
         const updatedUser = await updateUser(userId, updateData, ip, navegador);
         res.status(200).json({
             id: updatedUser._id,
-            msj: "Se ha actualizado el campo correctamente",
+            msj: "Su perfil se acutalizo correctamente",
             createdAt: updatedUser.createdAt,
             updatedAt: updatedUser.updatedAt
         });
