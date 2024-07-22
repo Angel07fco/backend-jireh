@@ -73,14 +73,22 @@ const deleteMascota = async (id) => {
         // Verificar si existen citas asociadas con el servicio
         const existingCitas = await Cita.find({ mascota: id });
         if (existingCitas.length > 0) {
-            throw new Error("No se puede eliminar porque hay citas agendadas con esta mascota.");
+            const mascota = await Pet.findByIdAndUpdate(
+                id,
+                { estado: 'indisponible' },
+                { new: true }
+            );
+            if (!mascota) {
+                throw new Error("Mascota no encontrado");
+            }
+            return mascota;
+        } else {
+            const deleteMas = await Pet.findByIdAndDelete(id);
+            if (!deleteMas) {
+                throw new Error("Mascota no encontrado");
+            }
+            return deleteMas;
         }
-
-        const deleteMas = await Pet.findByIdAndDelete(id);
-        if (!deleteMas) {
-            throw new Error("Mascota no encontrado");
-        }
-        return deleteSer;
     } catch (error) {
         throw error;
     }
@@ -90,17 +98,17 @@ const deshabilitarMascota = async (data) => {
     try {
         const { id } = data;
 
-        const service = await Pet.findByIdAndUpdate(
+        const mascota = await Pet.findByIdAndUpdate(
             id,
             { estado: 'indisponible' },
             { new: true }
         );
 
-        if (!service) {
+        if (!mascota) {
             throw new Error("Mascota no encontrada");
         }
 
-        return service;
+        return mascota;
     } catch (error) {
         throw new Error(error.message);
     }
@@ -110,13 +118,13 @@ const habilitarMascota = async (data) => {
     try {
         const { id } = data;
 
-        const service = await Pet.findByIdAndUpdate(
+        const mascota = await Pet.findByIdAndUpdate(
             id,
             { estado: 'disponible' },
             { new: true }
         );
 
-        if (!service) {
+        if (!mascota) {
             throw new Error("Mascota no encontrada");
         }
 
