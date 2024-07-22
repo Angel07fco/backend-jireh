@@ -1,12 +1,22 @@
 const express = require("express");
 const router = express.Router();
-const { getAllServices, getServiceById, createNewService, deshabilitarService, habilitarService, updateServicio } = require("./controller");
+const { getAllServices, getAllServicesAdmin, getServiceById, createNewService, deshabilitarService, habilitarService, updateServicio, deleteServicio } = require("./controller");
 const verifyToken = require("../../middleware/auth");
 
 // Ruta para obtener todos los servicios
 router.get("/", async (req, res) => {
     try {
         const services = await getAllServices();
+        res.status(200).json(services);
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+// Obtener todos los servicios para admin
+router.get('/adminservices', async (req, res) => {
+    try {
+        const services = await getAllServicesAdmin();
         res.status(200).json(services);
     } catch (error) {
         res.status(400).send(error.message);
@@ -20,18 +30,6 @@ router.get("/:id", async (req, res) => {
         res.status(200).json(service);
     } catch (error) {
         res.status(404).send(error.message);
-    }
-});
-
-// Rutas para admins
-
-// Obtener un servicio
-router.get("/admingetservices", verifyToken, async (req, res) => {
-    try {
-        const services = await getAllServices();
-        res.status(200).json(services);
-    } catch (error) {
-        res.status(400).send(error.message);
     }
 });
 
@@ -65,6 +63,20 @@ router.put("/:id", async (req, res) => {
         res.status(200).json({
             id: upServicio._id,
             msj: `Se ha actualizado correctamente el servicio ${upServicio.name}.`,
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+// Eliminar blog
+router.delete("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const delServicio = await deleteServicio(id);
+        res.status(200).json({
+            id: delServicio._id,
+            msj: `Se ha eliminado correctamente el servicio ${delServicio.name}.`,
         });
     } catch (error) {
         res.status(400).send(error.message);

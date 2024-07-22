@@ -1,8 +1,18 @@
 const Service = require("./model");
+const Cita = require("../citas/model")
 
 const getAllServices = async () => {
     try {
-        const services = await Service.find({});
+        const services = await Service.find({ estado: "disponible" });
+        return services;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+const getAllServicesAdmin = async () => {
+    try {
+        const services = await Service.find();
         return services;
     } catch (error) {
         throw new Error(error.message);
@@ -51,6 +61,25 @@ const updateServicio = async (id, data) => {
     }
 };
 
+// Eliminar un servicio
+const deleteServicio = async (id) => {
+    try {
+        // Verificar si existen citas asociadas con el servicio
+        const existingCitas = await Cita.find({ servicio: id });
+        if (existingCitas.length > 0) {
+            throw new Error("No se puede eliminar el servicio porque hay citas agendadas con este servicio.");
+        }
+
+        const deleteSer = await Service.findByIdAndDelete(id);
+        if (!deleteSer) {
+            throw new Error("Servicio no encontrado");
+        }
+        return deleteSer;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const deshabilitarService = async (data) => {
     try {
         const { id } = data;
@@ -92,4 +121,4 @@ const habilitarService = async (data) => {
 };
 
 
-module.exports = { createNewService, getAllServices, getServiceById, updateServicio, deshabilitarService, habilitarService };
+module.exports = { createNewService, getAllServicesAdmin, getAllServices, getServiceById, updateServicio, deleteServicio, deshabilitarService, habilitarService };
