@@ -53,10 +53,12 @@ router.get("/", auth, async (req, res) => {
             id: cita.id,
             usuario: cita.usuario.user,
             mascota: cita.mascota.name,
+            imagen: cita.mascota.img,
             servicio: cita.servicio.name,
             medico: cita.medico.nombre,
             fecha: cita.fecha,
-            hora: cita.hora
+            hora: cita.hora,
+            comentarios: cita.comentarios
         }));
         res.status(200).json(citasReducidas);
     } catch (error) {
