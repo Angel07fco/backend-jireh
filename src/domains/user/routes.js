@@ -228,7 +228,7 @@ router.put("/deshabilitar/:id", async (req, res) => {
         console.log(usuarioDes);
         res.status(200).json({
             id: usuarioDes._id,
-            msj: `Se ha deshabilitado el servicio ${usuarioDes.user} correctamente.`
+            msj: `Se ha bloqueado la cuenta de ${usuarioDes.user} correctamente.`
         });
     } catch (error) {
         res.status(400).send(error.message);
@@ -241,7 +241,7 @@ router.put("/habilitar/:id", async (req, res) => {
         const usuarioHabilitado = await habilitarUsuario({ id });
         res.status(200).json({
             id: usuarioHabilitado._id,
-            msj: `Se ha habilitado el servicio ${usuarioHabilitado.user} correctamente.`
+            msj: `Se ha activado la cuenta de ${usuarioHabilitado.user} correctamente.`
         });
     } catch (error) {
         res.status(400).send(error.message);
