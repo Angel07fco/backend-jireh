@@ -128,7 +128,7 @@ const habilitarMascota = async (data) => {
             throw new Error("Mascota no encontrada");
         }
 
-        return service;
+        return mascota;
     } catch (error) {
         throw new Error(error.message);
     }
