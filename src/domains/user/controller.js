@@ -173,7 +173,7 @@ const deshabilitarUsuario = async (data) => {
         const usuarioDeshabilitado = await User.findByIdAndUpdate(
             id,
             { accountStatus: 'bloqueda' },
-            { new: true, select: '_id user email phone userStatus' }
+            { new: true }
         );
 
         if (!usuarioDeshabilitado) {
@@ -193,7 +193,7 @@ const habilitarUsuario = async (data) => {
         const usuarioHabilitado = await User.findByIdAndUpdate(
             id,
             { accountStatus: 'activo' },
-            { new: true, select: '_id user email phone userStatus' }
+            { new: true }
         );
 
         if (!usuarioHabilitado) {
