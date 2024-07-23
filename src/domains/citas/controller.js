@@ -60,6 +60,30 @@ const getCitaByUserId = async (usuario) => {
     }
 };
 
+const getCitaByUserIdProximas = async (usuario) => {
+    try {
+        const citasProximas = await Cita.find({ usuario, estado: 'proxima' }).populate('usuario mascota servicio medico');
+        if (!citasProximas || citasProximas.length === 0) {
+            throw new Error("No se encontraron citas próximas para este usuario.");
+        }
+        return citasProximas;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+const getCitaByUserIdRealizadas = async (usuario) => {
+    try {
+        const citasRealizadas = await Cita.find({ usuario, estado: 'realizada' }).populate('usuario mascota servicio medico');
+        if (!citasRealizadas || citasRealizadas.length === 0) {
+            throw new Error("No se encontraron citas realizadas para este usuario.");
+        }
+        return citasRealizadas;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
 const getCitaByUserIdFechaHora = async (usuario, fecha, hora) => {
     try {
         const cita = await Cita.findOne({ usuario, fecha, hora }).populate('usuario mascota servicio medico');
@@ -156,4 +180,4 @@ const updateCita = async (citaId, updateData) => {
     }
 };
 
-module.exports = { createNewCita, getCitaByUserId, getCitaByUserIdFechaHora, getCitasByFechaByMedico, getCitas, getValidationPet, deleteCita, getCitaByUserIdWearOs, updateCita };
+module.exports = { createNewCita, getCitaByUserId, getCitaByUserIdProximas, getCitaByUserIdRealizadas, getCitaByUserIdFechaHora, getCitasByFechaByMedico, getCitas, getValidationPet, deleteCita, getCitaByUserIdWearOs, updateCita };

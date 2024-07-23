@@ -1,7 +1,7 @@
 const express = require("express");
 const moment = require('moment');
 const router = express.Router();
-const { createNewCita, getCitaByUserId, getCitasByFechaByMedico, getCitaByUserIdFechaHora, getCitaByUserIdWearOs, getCitas, getValidationPet, deleteCita, updateCita } = require("./controller");
+const { createNewCita, getCitaByUserId, getCitaByUserIdProximas, getCitaByUserIdRealizadas, getCitasByFechaByMedico, getCitaByUserIdFechaHora, getCitaByUserIdWearOs, getCitas, getValidationPet, deleteCita, updateCita } = require("./controller");
 const auth = require("../../middleware/auth");
 const { verifyTokenAcceso } = require("../tokenacceso/controller");
 
@@ -71,6 +71,28 @@ router.get("/:usuario", async(req, res) => {
 
     try {
         const citas = await getCitaByUserId(usuario);
+        res.status(200).json(citas);
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+router.get("/proximas/:usuario", async(req, res) => {
+    const { usuario } = req.params;
+
+    try {
+        const citas = await getCitaByUserIdProximas(usuario);
+        res.status(200).json(citas);
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+router.get("/realizadas/:usuario", async(req, res) => {
+    const { usuario } = req.params;
+
+    try {
+        const citas = await getCitaByUserIdRealizadas(usuario);
         res.status(200).json(citas);
     } catch (error) {
         res.status(400).send(error.message);
