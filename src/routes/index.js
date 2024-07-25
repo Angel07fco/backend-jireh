@@ -15,6 +15,7 @@ const preguntasFrecuentes = require("./../domains/faq");
 const TokenAccesoRoutes = require("../domains/tokenacceso");
 const Galeria = require("../domains/galeria");
 const Blog = require("../domains/blog");
+const CalificacionCitaRoutes = require("./../domains/calificaciones");
 
 router.use("/user", userRoutes);
 router.use("/otp", OTPRoutes);
@@ -30,6 +31,7 @@ router.use("/horario", horariosRoutes);
 router.use("/preguntas-frecuentes", preguntasFrecuentes);
 router.use("/galeria", Galeria);
 router.use("/blog", Blog);
+router.use("/calificacionCita", CalificacionCitaRoutes);
 
 router.use("/log_inicio_sesion", logSession);
 

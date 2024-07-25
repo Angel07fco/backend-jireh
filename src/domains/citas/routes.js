@@ -52,10 +52,13 @@ router.get("/", auth, async (req, res) => {
         const citasReducidas = citas.map(cita => ({
             id: cita.id,
             usuario: cita.usuario.user,
+            usuarioId: cita.usuario._id,
             mascota: cita.mascota.name,
             imagen: cita.mascota.img,
             servicio: cita.servicio.name,
+            servicio_Id: cita.servicio._id,
             medico: cita.medico.nombre,
+            medicoId: cita.medico._id,
             fecha: cita.fecha,
             hora: cita.hora,
             comentarios: cita.comentarios

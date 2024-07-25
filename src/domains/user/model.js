@@ -19,7 +19,7 @@ const UserSchema = new Schema({
     isLogginDate: { type: String, default: null },
     token: { type: String, default: null },
     expiratedTokenDate : { type: String, default: null },
-    verified: { type: Boolean, default: false },
+    verified: { type: Boolean, default: true },
     isLogginIntented: { type: Number, default: 0 },
     domicilio: {
         ciudad: { type: String, default: null },
