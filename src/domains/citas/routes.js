@@ -1,7 +1,19 @@
 const express = require("express");
 const moment = require('moment');
 const router = express.Router();
-const { createNewCita, getCitaByUserId, getCitaByUserIdProximas, getCitaByUserIdRealizadas, getCitasByFechaByMedico, getCitaByUserIdFechaHora, getCitaByUserIdWearOs, getCitas, getValidationPet, deleteCita, updateCita } = require("./controller");
+const {
+    createNewCita,
+    getCitaByUserId,
+    getCitaByUserIdProximas,
+    getCitaByUserIdRealizadas,
+    getCitasByFechaByMedico,
+    getCitaByUserIdFechaHora,
+    getCitaByUserIdWearOs,
+    getCitas,
+    getValidationPet,
+    deleteCita,
+    updateCita,
+    getCountCitasByFechaAndEstado } = require("./controller");
 const auth = require("../../middleware/auth");
 const { verifyTokenAcceso } = require("../tokenacceso/controller");
 
@@ -256,6 +268,17 @@ router.delete("/alexa/cancelar-cita/:usuario/:fecha/:hora", async (req, res) => 
             hora: horaFormateada,
             mensaje: estadoCita
         });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
+// Ruta para obtener el conteo de citas por estado para una fecha dada
+router.get('/count/:fecha', async (req, res) => {
+    const { fecha } = req.params;
+    try {
+        const counts = await getCountCitasByFechaAndEstado(fecha);
+        res.status(200).json(counts);
     } catch (error) {
         res.status(400).send(error.message);
     }

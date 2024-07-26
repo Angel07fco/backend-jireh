@@ -180,4 +180,19 @@ const updateCita = async (citaId, updateData) => {
     }
 };
 
-module.exports = { createNewCita, getCitaByUserId, getCitaByUserIdProximas, getCitaByUserIdRealizadas, getCitaByUserIdFechaHora, getCitasByFechaByMedico, getCitas, getValidationPet, deleteCita, getCitaByUserIdWearOs, updateCita };
+const getCountCitasByFechaAndEstado = async (fecha) => {
+    try {
+        const estados = ['realizada', 'en vivo', 'en proceso de finalizar', 'proxima'];
+        const counts = {};
+
+        for (const estado of estados) {
+            counts[estado] = await Cita.countDocuments({ fecha, estado });
+        }
+
+        return counts;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+module.exports = { createNewCita, getCitaByUserId, getCitaByUserIdProximas, getCitaByUserIdRealizadas, getCitaByUserIdFechaHora, getCitasByFechaByMedico, getCitas, getValidationPet, deleteCita, getCitaByUserIdWearOs, updateCita, getCountCitasByFechaAndEstado };
