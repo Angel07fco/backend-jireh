@@ -195,13 +195,25 @@ const getCountCitasByFechaAndEstado = async (fecha) => {
     }
 };
 
-const getCitasByFechaAndEstado = async (fecha, estado) => {
+const getCitasByFecha = async (fecha) => {
     try {
-        const citas = await Cita.find({ fecha, estado });
+        const citas = await Cita.find({ fecha });
         return citas;
     } catch (error) {
         throw new Error(error.message);
     }
 };
 
-module.exports = { createNewCita, getCitaByUserId, getCitaByUserIdProximas, getCitaByUserIdRealizadas, getCitaByUserIdFechaHora, getCitasByFechaByMedico, getCitas, getValidationPet, deleteCita, getCitaByUserIdWearOs, updateCita, getCountCitasByFechaAndEstado, getCitasByFechaAndEstado };
+module.exports = { createNewCita,
+    getCitaByUserId,
+    getCitaByUserIdProximas,
+    getCitaByUserIdRealizadas,
+    getCitaByUserIdFechaHora,
+    getCitasByFechaByMedico,
+    getCitas,
+    getValidationPet,
+    deleteCita,
+    getCitaByUserIdWearOs,
+    updateCita,
+    getCountCitasByFechaAndEstado,
+    getCitasByFecha };

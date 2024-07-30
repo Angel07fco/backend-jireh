@@ -13,7 +13,7 @@ const {
     getValidationPet,
     deleteCita,
     updateCita,
-    getCitasByFechaAndEstado,
+    getCitasByFecha,
     getCountCitasByFechaAndEstado } = require("./controller");
 const auth = require("../../middleware/auth");
 const { verifyTokenAcceso } = require("../tokenacceso/controller");
@@ -300,12 +300,12 @@ router.get('/count/:fecha', async (req, res) => {
     }
 });
 
-router.get("/filtrar/:fecha/:estado", async (req, res) => {
-    const { fecha, estado } = req.params;
+router.get("/filtrar/:fecha", async (req, res) => {
+    const { fecha } = req.params;
     try {
-        const citas = await getCitasByFechaAndEstado(fecha, estado);
+        const citas = await getCitasByFecha(fecha);
         if (!citas.length) {
-            return res.status(404).send("No se encontraron citas para la fecha y el estado especificados.");
+            return res.status(404).send("No se encontraron citas para la fecha especificada.");
         }
         res.status(200).json(citas);
     } catch (error) {
