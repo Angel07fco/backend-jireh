@@ -13,10 +13,10 @@ const updateCitaEstado = async () => {
 
         for (const cita of citas) {
             const [horaInicio, horaFin] = cita.hora.split('-');
-            const horaInicioMoment = moment(horaInicio, 'HH:mm');
-            const horaFinMoment = moment(horaFin, 'HH:mm');
+            const horaInicioMoment = moment(`${cita.fecha} ${horaInicio}`, 'DD-MM-YYYY HH:mm');
+            const horaFinMoment = moment(`${cita.fecha} ${horaFin}`, 'DD-MM-YYYY HH:mm');
             const fechaCitaMoment = moment(cita.fecha, 'DD-MM-YYYY');
-            const horaFinCita = moment(`${cita.fecha} ${horaFin}`, 'DD-MM-YYYY HH:mm');
+            const horaFinCita = moment(`${cita.fecha} ${horaFin}`, 'DD-MM-YYYY HH:mm').add(2, 'hours');
 
             if (fechaCitaMoment.isBefore(moment(), 'day')) {
                 cita.estado = 'realizada';
@@ -24,9 +24,9 @@ const updateCitaEstado = async () => {
             } else if (fechaCitaMoment.isSame(moment(), 'day')) {
                 if (horaActual.isBetween(horaInicioMoment, horaFinMoment, null, '[)')) {
                     cita.estado = 'en vivo';
-                } else if (horaActual.isAfter(horaFinMoment) && horaActual.isBefore(horaFinCita.add(2, 'hours'))) {
+                } else if (horaActual.isAfter(horaFinMoment) && horaActual.isBefore(horaFinCita)) {
                     cita.estado = 'en proceso de finalizar';
-                } else if (horaActual.isSameOrAfter(horaFinCita.add(2, 'hours'))) {
+                } else if (horaActual.isSameOrAfter(horaFinCita)) {
                     cita.estado = 'realizada';
                 }
                 await cita.save();
