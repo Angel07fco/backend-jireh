@@ -197,7 +197,7 @@ const getCountCitasByFechaAndEstado = async (fecha) => {
 
 const getCitasByFecha = async (fecha) => {
     try {
-        const citas = await Cita.find({ fecha });
+        const citas = await Cita.find({ fecha }).populate('usuario mascota servicio medico');
         return citas;
     } catch (error) {
         throw new Error(error.message);
