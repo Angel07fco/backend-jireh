@@ -8,11 +8,6 @@ const BlogSchema = new Schema({
     categories: { type: String, required: true},
     imageUrl: { type: String, default: null },
     datePosted: { type: Date, default: Date.now }
-    /*comments: [{
-        user: { type: String, required: true },
-        comment: { type: String, required: true },
-        date: { type: Date, default: Date.now }
-    }]*/
 });
 
 const Blog = mongoose.model("Blog", BlogSchema);

@@ -200,7 +200,21 @@ router.get("/alexa/:usuario", async (req, res) => {
             return res.status(404).send("No se encontraron citas para este usuario.");
         }
 
-        const citasOrdenadas = citas.sort((a, b) => moment(a.fecha + ' ' + a.hora, 'DD-MM-YYYY HH:mm').unix() - moment(b.fecha + ' ' + b.hora, 'DD-MM-YYYY HH:mm').unix());
+        // Obtener fecha de hoy
+        const hoy = moment().format('DD-MM-YYYY');
+        console.log(hoy)
+
+        // Filtrar citas del día de hoy y con estado 'proxima'
+        const citasHoy = citas.filter(cita =>
+            cita.fecha === hoy && cita.estado === 'proxima'
+        );
+
+        if (!citasHoy.length) {
+            return res.status(404).send("No se encontraron citas para hoy con estado 'proxima'.");
+        }
+
+        // Ordenar las citas de hoy por hora
+        const citasOrdenadas = citasHoy.sort((a, b) => moment(a.hora, 'HH:mm').unix() - moment(b.hora, 'HH:mm').unix());
         const citaMasProxima = citasOrdenadas[0];
 
         const fechaFormateada = moment(citaMasProxima.fecha, 'DD-MM-YYYY').format('D [de] MMMM');
@@ -214,6 +228,7 @@ router.get("/alexa/:usuario", async (req, res) => {
         res.status(400).send(error.message);
     }
 });
+
 
 // Obtener informacion de una cita proporcionando id del usuario, fecha y hora
 router.get("/alexa/info/:usuario/:fecha/:hora", async (req, res) => {

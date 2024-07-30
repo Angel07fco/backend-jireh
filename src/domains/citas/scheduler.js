@@ -6,7 +6,7 @@ const Cita = require('./model'); // Asegúrate de que la ruta sea correcta
 // Función para actualizar el estado de las citas
 const updateCitaEstado = async () => {
     const fechaActual = moment().format('DD-MM-YYYY');
-    const horaActual = moment().format('HH:mm');
+    const horaActual = moment();
 
     try {
         const citas = await Cita.find({ estado: { $in: ['proxima', 'en vivo', 'en proceso de finalizar'] } });
@@ -19,16 +19,14 @@ const updateCitaEstado = async () => {
             const horaFinCita = moment(`${cita.fecha} ${horaFin}`, 'DD-MM-YYYY HH:mm');
 
             if (fechaCitaMoment.isBefore(moment(), 'day')) {
-                // Si la fecha de la cita es anterior a la fecha actual
                 cita.estado = 'realizada';
                 await cita.save();
             } else if (fechaCitaMoment.isSame(moment(), 'day')) {
-                // Si la fecha de la cita es hoy
-                if (horaActual >= horaInicio && horaActual < horaFin) {
+                if (horaActual.isBetween(horaInicioMoment, horaFinMoment, null, '[)')) {
                     cita.estado = 'en vivo';
-                } else if (horaActual >= horaFin && moment().isBefore(horaFinCita.add(2, 'hours'))) {
+                } else if (horaActual.isAfter(horaFinMoment) && horaActual.isBefore(horaFinCita.add(2, 'hours'))) {
                     cita.estado = 'en proceso de finalizar';
-                } else if (moment().isSameOrAfter(horaFinCita.add(2, 'hours'))) {
+                } else if (horaActual.isSameOrAfter(horaFinCita.add(2, 'hours'))) {
                     cita.estado = 'realizada';
                 }
                 await cita.save();
