@@ -201,17 +201,20 @@ router.get("/alexa/:usuario", async (req, res) => {
             return res.status(404).send("No se encontraron citas para este usuario.");
         }
 
-        // Obtener fecha de hoy
-        const hoy = moment().format('DD-MM-YYYY');
-        console.log(hoy)
+        // Obtener fecha y hora actuales
+        const ahora = moment();
+        const hoy = ahora.format('DD-MM-YYYY');
+        const horaActual = ahora.format('HH:mm');
 
-        // Filtrar citas del día de hoy y con estado 'proxima'
+        // Filtrar citas del día de hoy con estado 'proxima' y después de la hora actual
         const citasHoy = citas.filter(cita =>
-            cita.fecha === hoy && cita.estado === 'proxima'
+            cita.fecha === hoy &&
+            cita.estado === 'proxima' &&
+            moment(cita.hora, 'HH:mm').isAfter(ahora)
         );
 
         if (!citasHoy.length) {
-            return res.status(404).send("No se encontraron citas para hoy con estado 'proxima'.");
+            return res.status(404).send("No se encontraron citas futuras para hoy con estado 'proxima'.");
         }
 
         // Ordenar las citas de hoy por hora
