@@ -206,7 +206,6 @@ router.get("/alexa/:usuario", async (req, res) => {
         const hoy = ahora.format('DD-MM-YYYY');
         const horaActual = ahora.format('HH:mm');
 
-        // Filtrar citas del día de hoy con estado 'proxima' y después de la hora actual
         const citasHoy = citas.filter(cita =>
             cita.fecha === hoy &&
             cita.estado === 'proxima' &&
