@@ -16,6 +16,9 @@ const TokenAccesoRoutes = require("../domains/tokenacceso");
 const Galeria = require("../domains/galeria");
 const Blog = require("../domains/blog");
 const CalificacionCitaRoutes = require("./../domains/calificaciones");
+const PostAgendamientoRoutes = require("./../domains/feedbackpostagendamiento");
+const PostCitaRoutes = require("./../domains/feedbackpostcita");
+const paymentsRoutes = require("./../domains/payments");
 
 router.use("/user", userRoutes);
 router.use("/otp", OTPRoutes);
@@ -34,5 +37,9 @@ router.use("/blog", Blog);
 router.use("/calificacionCita", CalificacionCitaRoutes);
 
 router.use("/log_inicio_sesion", logSession);
+router.use("/post_agendamiento", PostAgendamientoRoutes);
+router.use("/post_cita", PostCitaRoutes);
+
+router.use("/payments", paymentsRoutes);
 
 module.exports = router;
