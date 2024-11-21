@@ -1,11 +1,11 @@
-const FeedbackPostAgendamiento = require("./model");
+const Feedback = require("./model");
 
 const sendFeedbackPostAgendamiento = async (data) => {
   try {
     const { userId, citaId, pregunta1, pregunta2, pregunta3, comentarios } =
       data;
 
-    const newFeedbackPostAgendamiento = new FeedbackPostAgendamiento({
+    const newFeedbackPostAgendamiento = new Feedback({
       userId,
       citaId,
       pregunta1,

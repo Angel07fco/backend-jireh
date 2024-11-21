@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const FeedbackPostAgendamientoSchema = new Schema({
+const Feedback = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: "User" },
   citaId: { type: Schema.Types.ObjectId, ref: "Cita" },
   pregunta1: { type: Number, min: 1, max: 5, required: true },
@@ -11,9 +11,6 @@ const FeedbackPostAgendamientoSchema = new Schema({
   fecha: { type: Date, default: Date },
 });
 
-const FeedbackPostAgendamiento = mongoose.model(
-  "FeedbackPostAgendamientoSchema",
-  FeedbackPostAgendamientoSchema
-);
+const FeedbackPostAgendamiento = mongoose.model("Feedback", Feedback);
 
 module.exports = FeedbackPostAgendamiento;
