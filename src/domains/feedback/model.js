@@ -8,7 +8,6 @@ const Feedback = new Schema({
   pregunta1: { type: Number, min: 1, max: 5, required: true },
   pregunta2: { type: Number, min: 1, max: 5, required: true },
   pregunta3: { type: Number, min: 1, max: 5, required: true },
-  comentarios: { type: String, required: true },
   fecha: { type: Date, default: Date },
 });
 

@@ -4,8 +4,7 @@ const { sendFeedbackPostAgendamiento } = require("./controller");
 
 router.post("/", async (req, res) => {
   try {
-    const { userId, citaId, pregunta1, pregunta2, pregunta3, comentarios } =
-      req.body;
+    const { userId, citaId, pregunta1, pregunta2, pregunta3 } = req.body;
 
     const cretedFeedbackPostAgendamiento = await sendFeedbackPostAgendamiento({
       userId,
@@ -13,7 +12,6 @@ router.post("/", async (req, res) => {
       pregunta1,
       pregunta2,
       pregunta3,
-      comentarios,
     });
     res.status(200).json(cretedFeedbackPostAgendamiento);
   } catch (error) {

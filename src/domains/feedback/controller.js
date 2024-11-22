@@ -2,8 +2,7 @@ const Feedback = require("./model");
 
 const sendFeedbackPostAgendamiento = async (data) => {
   try {
-    const { userId, citaId, pregunta1, pregunta2, pregunta3, comentarios } =
-      data;
+    const { userId, citaId, pregunta1, pregunta2, pregunta3 } = data;
 
     const newFeedbackPostAgendamiento = new Feedback({
       userId,
@@ -11,7 +10,6 @@ const sendFeedbackPostAgendamiento = async (data) => {
       pregunta1,
       pregunta2,
       pregunta3,
-      comentarios,
     });
     const createdFeedbackPostAgendamiento =
       await newFeedbackPostAgendamiento.save();
