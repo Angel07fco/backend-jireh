@@ -97,11 +97,11 @@ router.get("/:usuario", async (req, res) => {
   }
 });
 
-router.get("/envivo/:usuario", async (req, res) => {
-  const { usuario } = req.params;
+router.get("/envivo/:usuario/:horaActual", async (req, res) => {
+  const { usuario, horaActual } = req.params;
 
   try {
-    const citas = await getCitaByUserIdEnVivo(usuario);
+    const citas = await getCitaByUserIdEnVivo(usuario, horaActual);
     res.status(200).json(citas);
   } catch (error) {
     res.status(400).send(error.message);

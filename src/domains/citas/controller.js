@@ -65,12 +65,10 @@ const getCitaByUserId = async (usuario) => {
   }
 };
 
-const getCitaByUserIdEnVivo = async (usuario) => {
+const getCitaByUserIdEnVivo = async (usuario, horaActual) => {
   try {
     // Obtener la fecha actual en el formato "DD-MM-YYYY"
     const fechaActual = moment().format("DD-MM-YYYY");
-    // Obtener la hora actual en el formato "HH:mm" (24 horas)
-    const horaActual = moment().format("HH:mm");
 
     // Obtener las citas del usuario
     const citas = await Cita.find({ usuario }).populate(
