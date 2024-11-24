@@ -18,6 +18,7 @@ const Blog = require("../domains/blog");
 const CalificacionCitaRoutes = require("./../domains/calificaciones");
 const Feedback = require("../domains/feedback");
 const paymentsRoutes = require("./../domains/payments");
+const notificacionesRoutes = require("./../domains/notificaciones");
 
 router.use("/user", userRoutes);
 router.use("/otp", OTPRoutes);
@@ -39,5 +40,6 @@ router.use("/log_inicio_sesion", logSession);
 router.use("/feedback", Feedback);
 
 router.use("/payments", paymentsRoutes);
+router.use("/notifications", notificacionesRoutes);
 
 module.exports = router;
